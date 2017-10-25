@@ -8,20 +8,20 @@ const toHex = require('../utils/to-hex');
 
 const getBalance = get('c[0]');
 const GAS_LIMIT_DEFAULT = 50000;
-const GAS_PRICE_MAX = new BN(50000);
+const GAS_PRICE_MAX = new BN(100000000000);
 
 class Profile {
-  constructor({ gethClient, address0x, snmtContract, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
+  constructor({ gethClient, address0x, contracts, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
 
     invariant(gethClient, 'gethClient is not defined');
-    invariant(snmtContract && snmtContract.constructor.name === "TruffleContract", 'snmtContract is not valid');
+    invariant(contracts.snmt && contracts.snmt.constructor.name === "TruffleContract", 'snmtContract is not valid');
     invariant(address0x, 'address is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
     this.throwGasPriceError = throwGasPriceError;
     this.limitGasPrice = new BN(limitGasPrice);
     this.geth = gethClient;
-    this.contract = snmtContract;
+    this.contracts = contracts;
     this.address = address0x;
   }
 
@@ -34,7 +34,7 @@ class Profile {
   }
 
   async getTokenBalance() {
-    const result = await this.contract.balanceOf(this.address);
+    const result = await this.contracts.snmt.balanceOf(this.address);
 
     return getBalance(result);
   }
@@ -65,7 +65,7 @@ class Profile {
     const gasLimit = toHex(await this.getGasLimit());
     const gasPrice = toHex(await this.getGasPrice());
 
-    const resultPromise =  this.contract.transfer(
+    const resultPromise =  this.contracts.snmt.transfer(
       this.normalizeTarget(to),
       qty,
       {
