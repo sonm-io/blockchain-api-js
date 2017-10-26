@@ -21,7 +21,7 @@ const createProvider = memoize.memoize(providerFactory);
  * @param {string} address
  * @param {string} privateKey 
  */
-async function createProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
+async function initProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
   const address0x = add0x(address);
   const privateKey0x = add0x(privateKey);
   const provider = createProvider(remoteEthNodeUrl, address0x, privateKey0x);
@@ -59,7 +59,7 @@ async function createProfile(remoteEthNodeUrl, address, privateKey, params = {})
 }
 
 module.exports = {
-  createProfile,
+  initProfile,
   createProvider,
   createGethClient,
 };

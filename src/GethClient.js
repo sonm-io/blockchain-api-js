@@ -34,6 +34,6 @@ module.exports = class GethClient {
   async sendTransaction(web3tx) {
     const hash = await this.method('sendTransaction')(web3tx);
 
-    return new TransactionResult(hash, this);
+    return new TransactionResult(hash, this, web3tx);
   }
 };

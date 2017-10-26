@@ -1,15 +1,16 @@
-// const BN = require('bignumber.js');
+const BN = require('bignumber.js');
 
 const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
-    constructor(src, gethClient) {
+    constructor(src, gethClient, tx) {
       this._timestamp = Date.now();
       this._geth = gethClient;
       this._receipt = null;
       this._hash = null;
       this._promise = null;
+      this._transaction = tx;
 
       if (src instanceof TxResult) {
         this._copyCtr(src);
@@ -55,9 +56,9 @@ class TxResult {
     }
 
     async getTxPrice() {
-      const [ receipt, gasPrice ] = await Promise.all([ this.getReceipt(), this._geth.getGasPrice() ]);
+      const receipt = await this.getReceipt();
 
-      return gasPrice.mul(receipt.gasUsed);
+      return new BN(this._transaction.gasPrice).mul(receipt.gasUsed);
     }
 
     async getReceipt() {

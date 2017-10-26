@@ -7,7 +7,7 @@ const BN = require('bignumber.js');
 const toHex = require('../utils/to-hex');
 
 const getBalance = get('c[0]');
-const GAS_LIMIT_DEFAULT = 50000;
+const GAS_LIMIT_DEFAULT = 100000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Profile {
@@ -92,6 +92,51 @@ class Profile {
     };
 
     return this.geth.sendTransaction(tx);
+  }
+
+  // async voteGetVotes() {
+  //   return await this.contracts.sonmvoting.getVotes();
+  // }
+  //
+  // async voteGetVotingStatus() {
+  //   return await this.contracts.sonmvoting.getVotingSatus();
+  // }
+  //
+  // async voteVoteForA(qt = 1) {
+  //   const gasLimit = toHex(await this.getGasLimit());
+  //   const params = { from: this.address, gasLimit: gasLimit };
+  //
+  //   const result = await this.contracts.snmt.approve(this.contracts.sonmvoting.address, qt, params);
+  //
+  //   if ( result ) {
+  //     return await this.contracts.sonmvoting.voteForA(params);
+  //   }
+  // }
+
+  async getVotes() {
+    return [
+      'voteAddress1',
+      'voteAddress2',
+    ];
+  }
+
+  async setVote(address) {
+    this._currentVote = address;
+  }
+
+  async getVoteInfo() {
+    return {
+      question: 'WTF??',
+      answers: [
+        ['yes', 12],
+        ['no', 14],
+        ['maybe', 20],
+      ]
+    }
+  }
+
+  async vote( answer ) {
+    this._currentVote.vote(answer);
   }
 
   normalizeTarget(to) {
