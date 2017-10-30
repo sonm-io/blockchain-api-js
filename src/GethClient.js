@@ -8,6 +8,7 @@ module.exports = class GethClient {
     invariant(provider, 'provider is not defined');
 
     this.web3 = new Web3(provider);
+    this.provider = provider;
     this.methods = {};
     this.gasPrice = null;
   }

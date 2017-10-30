@@ -9,7 +9,7 @@ module.exports = function (json, password) {
     let kdfparams = json.crypto.kdfparams;
 
     if (json.crypto.kdf === 'scrypt') {
-        scryptjs(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), {
+        scryptjs(password, new Buffer(kdfparams.salt, 'hex'), {
             "N": kdfparams.n,
             "r": kdfparams.r,
             "p": kdfparams.p,
@@ -25,6 +25,7 @@ module.exports = function (json, password) {
     const ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
 
     const mac = sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
+
     if (mac !== json.crypto.mac) {
         throw new Error('Key derivation failed - possibly wrong passphrase')
     }

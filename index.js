@@ -1,5 +1,6 @@
 const providerFactory = require('./src/provider/signer-provider-factory');
 const Profile = require('./src/entity/Profile');
+const Votes = require('./src/entity/Votes');
 const config = require('./config');
 const contract = require('truffle-contract');
 const add0x = require('./src/utils/add-0x');
@@ -58,9 +59,19 @@ async function initProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
   return new Profile(ctrArguments);
 }
 
+/**
+ * create API entity Profile
+ * @param {string} remoteEthNodeUrl
+ * @param {string} address
+ * @param {string} privateKey
+ */
+async function initVote(profile) {
+  return new Votes(profile);
+}
+
 module.exports = {
   initProfile,
+  initVote,
   createProvider,
   createGethClient,
 };
-
