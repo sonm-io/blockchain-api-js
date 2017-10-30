@@ -5,9 +5,9 @@ const invariant = require('fbjs/lib/invariant');
 class Votes {
   constructor(profile) {
     invariant(profile, 'profile is not defined');
-    invariant(profile.contracts.sonmvoting && profile.contracts.sonmvoting.constructor.name === "TruffleContract", 'sonmVotingContract is not valid');
+    invariant(profile.contracts.voting && profile.contracts.voting.constructor.name === "TruffleContract", 'sonmVotingContract is not valid');
 
-    this.contract = profile.contracts.sonmvoting;
+    this.contract = profile.contracts.voting;
     this.profile = profile;
   }
 

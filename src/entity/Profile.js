@@ -14,7 +14,7 @@ class Profile {
   constructor({ gethClient, address0x, contracts, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
 
     invariant(gethClient, 'gethClient is not defined');
-    invariant(contracts.snmt && contracts.snmt.constructor.name === "TruffleContract", 'snmtContract is not valid');
+    invariant(contracts.token && contracts.token.constructor.name === "TruffleContract", 'Token contract is not valid');
     invariant(address0x, 'address is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
@@ -34,7 +34,7 @@ class Profile {
   }
 
   async getTokenBalance() {
-    const result = await this.contracts.snmt.balanceOf(this.address);
+    const result = await this.contracts.token.balanceOf(this.address);
 
     return getBalance(result);
   }
@@ -65,7 +65,7 @@ class Profile {
     const gasLimit = toHex(await this.getGasLimit());
     const gasPrice = toHex(await this.getGasPrice());
 
-    const resultPromise =  this.contracts.snmt.transfer(
+    const resultPromise =  this.contracts.token.transfer(
       this.normalizeTarget(to),
       qty,
       {

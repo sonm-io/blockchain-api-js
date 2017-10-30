@@ -2,7 +2,7 @@
 
 const Contract = require('truffle-contract');
 const invariant = require('fbjs/lib/invariant');
-const fs = require('fs-extra');
+const SnmToken = require('../../contracts/SNMT.json');
 
 module.exports = async function isERC20(address, gethClient) {
   invariant(address, 'address is not defined');
@@ -11,7 +11,8 @@ module.exports = async function isERC20(address, gethClient) {
 
   //check code
   if ( await gethClient.method('getCode')(address) !== '0x' ) {
-    const contractObject = Contract(await fs.readJson(`${__dirname}/../../contracts/SNMT.json`));
+
+    const contractObject = Contract(SnmToken);
     contractObject.setProvider(gethClient.provider);
 
     const contract = await contractObject.at(address);
