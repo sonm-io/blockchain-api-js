@@ -4,7 +4,7 @@ const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
-    constructor(src, gethClient, tx) {
+    constructor( src, gethClient, tx = null ) {
       this._timestamp = Date.now();
       this._geth = gethClient;
       this._receipt = null;
@@ -55,10 +55,19 @@ class TxResult {
       return this._hash;
     }
 
+    async getTransaction() {
+      if ( !this._transaction ) {
+        this._transaction = await this._geth.method('getTransaction')(await this.getHash());
+      }
+
+      return this._transaction;
+    }
+
     async getTxPrice() {
       const receipt = await this.getReceipt();
+      const transaction = await this.getTransaction();
 
-      return new BN(this._transaction.gasPrice).mul(receipt.gasUsed);
+      return new BN(transaction.gasPrice).mul(receipt.gasUsed);
     }
 
     async getReceipt() {

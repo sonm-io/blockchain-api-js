@@ -10,7 +10,7 @@ const getBalance = get('c[0]');
 const GAS_LIMIT_DEFAULT = 100000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
-class Profile {
+class Account {
   constructor({ gethClient, address0x, contracts, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
 
     invariant(gethClient, 'gethClient is not defined');
@@ -95,10 +95,10 @@ class Profile {
   }
 
   normalizeTarget(to) {
-    return to instanceof Profile
+    return to instanceof Account
       ? to.address
       : to; 
   }
 }
 
-module.exports = Profile;
+module.exports = Account;

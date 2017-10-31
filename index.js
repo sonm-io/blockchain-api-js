@@ -1,5 +1,5 @@
 const providerFactory = require('./src/provider/signer-provider-factory');
-const Profile = require('./src/entity/Profile');
+const Account = require('./src/entity/Account');
 const Votes = require('./src/entity/Votes');
 const config = require('./config');
 const contract = require('truffle-contract');
@@ -18,12 +18,12 @@ const createGethClient = memoize.memoize(function createGethClient(provider) {
 const createProvider = memoize.memoize(providerFactory);
 
 /**
- * create API entity Profile 
+ * create API entity Account
  * @param {string} remoteEthNodeUrl 
  * @param {string} address
  * @param {string} privateKey 
  */
-async function initProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
+async function createAccount(remoteEthNodeUrl, address, privateKey, params = {}) {
   const address0x = add0x(address);
   const privateKey0x = add0x(privateKey);
   const provider = createProvider(remoteEthNodeUrl, address0x, privateKey0x);
@@ -55,7 +55,7 @@ async function initProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
 
   Object.assign(ctrArguments, params);
 
-  return new Profile(ctrArguments);
+  return new Account(ctrArguments);
 }
 
 /**
@@ -64,13 +64,13 @@ async function initProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
  * @param {string} address
  * @param {string} privateKey
  */
-async function initVote(profile) {
+async function createVote(profile) {
   return new Votes(profile);
 }
 
 module.exports = {
-  initProfile,
-  initVote,
+  createAccount,
+  createVote,
   createProvider,
   createGethClient,
 };

@@ -32,9 +32,9 @@ module.exports = class GethClient {
     return this.gasPrice;
   }
 
-  async sendTransaction(web3tx) {
-    const hash = await this.method('sendTransaction')(web3tx);
+  async sendTransaction(tx) {
+    const hash = await this.method('sendTransaction')(tx);
 
-    return new TransactionResult(hash, this, web3tx);
+    return new TransactionResult(hash, this, tx);
   }
 };
