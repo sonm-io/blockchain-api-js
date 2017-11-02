@@ -5,24 +5,43 @@ const invariant = require('fbjs/lib/invariant');
 const TransactionResult = require('../TransactionResult');
 const BN = require('bignumber.js');
 const toHex = require('../utils/to-hex');
+const isERC20 = require('../utils/check_token');
 
 const getBalance = get('c[0]');
-const GAS_LIMIT_DEFAULT = 100000;
+const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Account {
-  constructor({ gethClient, address0x, contracts, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
+  constructor({ gethClient, address0x, config, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
 
     invariant(gethClient, 'gethClient is not defined');
-    invariant(contracts.token && contracts.token.constructor.name === "TruffleContract", 'Token contract is not valid');
     invariant(address0x, 'address is not defined');
+    invariant(config, 'config is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
     this.throwGasPriceError = throwGasPriceError;
     this.limitGasPrice = new BN(limitGasPrice);
     this.geth = gethClient;
-    this.contracts = contracts;
     this.address = address0x;
+    this.tokens = {};
+    this.config = config;
+  }
+
+  async initTokens() {
+    //init snm token
+    for ( const address of [this.config.contractAddress.token] ) {
+      await this.addToken(address);
+    }
+  }
+
+  async addToken( address ) {
+    const contract = await isERC20(address, this.geth);
+
+    if ( contract ) {
+      this.tokens[contract.symbol.toLowerCase()] = contract;
+    } else {
+      return false;
+    }
   }
 
   async getBalance() {
@@ -33,8 +52,8 @@ class Account {
       : result;
   }
 
-  async getTokenBalance() {
-    const result = await this.contracts.token.balanceOf(this.address);
+  async getTokenBalance( token = 'snmt' ) {
+    const result = await this.tokens[token].contract.balanceOf(this.address);
 
     return getBalance(result);
   }
@@ -60,12 +79,12 @@ class Account {
     return result;
   }
 
-  async sendTokens(to, amount) {
+  async sendTokens(to, amount, token = 'snmt') {
     const qty = toHex(amount);
     const gasLimit = toHex(await this.getGasLimit());
     const gasPrice = toHex(await this.getGasPrice());
 
-    const resultPromise =  this.contracts.token.transfer(
+    const resultPromise =  this.tokens[token].contract.transfer(
       this.normalizeTarget(to),
       qty,
       {

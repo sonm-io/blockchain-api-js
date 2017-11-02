@@ -4,7 +4,7 @@ const BN = require('bignumber.js');
 const getPrivateKey = require('../src/utils/read-private-key-json');
 const isERC20 = require('../src/utils/check_token');
 
-const {createAccount, createVote} = sonmApi;
+const {createAccount, createVotes} = sonmApi;
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
@@ -31,10 +31,12 @@ before(async function () {
   const gasPrice = await VASYA.getGasPrice();
   console.log('Gas price: ', gasPrice.toFormat());
 
-  VOTE = await createVote(VASYA);
+  VOTE = await createVotes(VASYA);
 });
 
 describe('Votes entity', function () {
+  this.timeout(120000);
+
   it('should get votes list', async function () {
     expect(await VOTE.getList()).to.be.an('array');
   });
@@ -42,8 +44,24 @@ describe('Votes entity', function () {
   it('should get vote info', async function () {
     const list = await VOTE.getList();
 
-    VOTE.setCurrent(list[0]);
+    VOTE.setCurrent(list[0].address);
     expect(await VOTE.getVoteInfo()).to.be.an('object')
+  });
+
+  it('should vote for option 1', async function () {
+    const list = await VOTE.getList();
+
+    VOTE.setCurrent(list[0].address);
+    const infoBefore = await VOTE.getVoteInfo();
+
+    //try to vote
+    const qty = 2;
+    await VOTE.vote(infoBefore.options[0].index, qty);
+
+    const infoAfter = await VOTE.getVoteInfo();
+
+    expect(infoBefore.options[0].votes).equal(infoAfter.options[0].votes - 1);
+    expect(infoBefore.options[0].weight).equal(infoAfter.options[0].weight - qty);
   });
 });
 
@@ -65,7 +83,8 @@ describe('Profile entity', function () {
 
       console.log(`transaction hash ${await txResult.getHash()}`);
 
-      await txResult.getReceipt();
+      const receipt = await txResult.getReceipt();
+      //console.log(receipt);
 
       const txPrice = await txResult.getTxPrice();
 
@@ -92,21 +111,12 @@ describe('Profile entity', function () {
 
       console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
 
-      // const txResult = await VASYA.sendTokens('0xED0D2eBc7B797c82D3A96A916fBfB5d526E0cE43', 100);
-      // console.log(`transaction hash ${await txResult.getHash()}`);
-      // const receipt = await txResult.getReceipt();
-      // console.log(receipt);
-      // console.log(await VASYA.voteGetVotingStatus());
-      // console.log(await VASYA.voteGetVotes());
-      // console.log(await VASYA.voteVoteForA());
-      // console.log(await VASYA.voteGetVotes());
-      // process.exit();
-
       const txResult = await VASYA.sendTokens(PETYA, qty);
 
       console.log(`transaction hash ${await txResult.getHash()}`);
 
       const receipt = await txResult.getReceipt();
+      //console.log(receipt);
 
       expect('' + await VASYA.getTokenBalance()).equal('' + new BN(vasyaBalance).minus(qty));
       expect('' + await PETYA.getTokenBalance()).equal('' + new BN(petyaBalance).plus(qty));
@@ -117,7 +127,7 @@ describe('Profile entity', function () {
     this.timeout(10000);
 
     it('should check smartContract on address', async function () {
-      expect(await isERC20(VASYA.contracts.token.address, VASYA.geth)).to.be.an('object');
+      expect(await isERC20(VASYA.tokens.snmt.contract.address, VASYA.geth)).to.be.an('object');
       expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
     });
   });
