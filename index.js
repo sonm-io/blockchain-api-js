@@ -7,6 +7,7 @@ const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const memoize = require('./src/utils/memoization');
 const environment = config.environment || 'development';
+const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 
 const SnmToken = require('./contracts/SNMT.json');
 const SnmVoting = require('./contracts/SonmVoting.json');
@@ -73,4 +74,7 @@ module.exports = {
   createVote,
   createProvider,
   createGethClient,
+  utils: {
+    recoverPrivateKey,
+  }
 };
