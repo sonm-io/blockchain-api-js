@@ -4,6 +4,7 @@ const Votes = require('./src/entity/Votes');
 const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const memoize = require('./src/utils/memoization');
+const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 
 const config = require('./config');
 const environment = config.environment || 'development';
@@ -62,4 +63,7 @@ module.exports = {
   createVotes,
   createProvider,
   createGethClient,
+  utils: {
+      recoverPrivateKey,
+  },
 };
