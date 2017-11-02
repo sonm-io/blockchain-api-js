@@ -1,0 +1,24 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": [
+            "Edge > 15",
+            "Firefox > 55",
+            "Chrome > 60",
+            "Safari > 10"
+          ]
+        },
+        "modules": false
+      }
+    ]
+  ],
+  "env": {
+    "production": {
+      "presets": ["minify"]
+    }
+  },
+  "plugins": ["external-helpers"]
+}

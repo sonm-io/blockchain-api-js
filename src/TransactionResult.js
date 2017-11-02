@@ -4,13 +4,16 @@ const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
-    constructor( src, gethClient, tx = null ) {
-      this._timestamp = Date.now();
+    constructor( src, gethClient, txParams = null ) {
       this._geth = gethClient;
       this._receipt = null;
       this._hash = null;
       this._promise = null;
-      this._transaction = tx;
+
+      if (txParams !== null) {
+        this.validateTxParams(txParams);
+      }
+      this._txParams = txParams;
 
       if (src instanceof TxResult) {
         this._copyCtr(src);
@@ -56,11 +59,21 @@ class TxResult {
     }
 
     async getTransaction() {
-      if ( !this._transaction ) {
-        this._transaction = await this._geth.method('getTransaction')(await this.getHash());
+      if (this._txParams === null) {
+        this._txParams = await this._geth.method('getTransaction')(await this.getHash());
+        this.validateTxParams(this._txParams);
       }
 
-      return this._transaction;
+      return this._txParams;
+    }
+
+    validateTxParams(txParams) {
+      const valid = typeof txParams === 'object'
+        && 'gasPrice' in txParams;
+
+      if (!valid) {
+        throw new Error('incorrect txParams');
+      }
     }
 
     async getTxPrice() {

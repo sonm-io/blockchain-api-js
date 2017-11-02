@@ -1,7 +1,7 @@
 const {expect} = require('chai');
 const sonmApi = require('../index');
 const BN = require('bignumber.js');
-const getPrivateKey = require('../src/utils/read-private-key-json');
+const getPrivateKey = require('../src/utils/recover-private-key');
 const isERC20 = require('../src/utils/check_token');
 
 const {createAccount, createVotes} = sonmApi;
