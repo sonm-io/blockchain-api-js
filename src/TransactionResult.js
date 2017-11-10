@@ -83,6 +83,13 @@ class TxResult {
       return new BN(transaction.gasPrice).mul(receipt.gasUsed);
     }
 
+    async getConfirmationsNumber() {
+      const receipt = await this.getReceipt();
+      const currentBlockNumber = await this._geth.method('getBlockNumber')()
+
+      return currentBlockNumber - receipt.blockNumber;
+    }
+
     async getReceipt() {
       let result;  
 
