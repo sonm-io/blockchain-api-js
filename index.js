@@ -10,37 +10,37 @@ const config = require('./config');
 const environment = config.environment || 'development';
 
 const createGethClient = memoize.memoize(function createGethClient(provider) {
-  return new GethClient(provider);
+    return new GethClient(provider);
 });
 
 const createProvider = memoize.memoize(providerFactory);
 
 /**
  * create API entity Account
- * @param {string} remoteEthNodeUrl 
+ * @param {string} remoteEthNodeUrl
  * @param {string} address
  * @param {string} privateKey
  */
-async function createAccount(remoteEthNodeUrl, address, privateKey, params = {} ) {
-  const address0x = add0x(address);
-  const privateKey0x = add0x(privateKey);
+async function createAccount(remoteEthNodeUrl, address, privateKey, params = {}) {
+    const address0x = add0x(address);
+    const privateKey0x = add0x(privateKey);
 
-  const provider = createProvider(remoteEthNodeUrl, address0x, privateKey0x);
-  const gethClient = createGethClient(provider);
+    const provider = createProvider(remoteEthNodeUrl, address0x, privateKey0x);
+    const gethClient = createGethClient(provider);
 
-  const ctrArguments = {
-    address0x,
-    gethClient,
-    config: config[environment],
-  };
+    const ctrArguments = {
+        address0x,
+        gethClient,
+        config: config[environment],
+    };
 
-  Object.assign(ctrArguments, params);
+    Object.assign(ctrArguments, params);
 
-  const account = new Account(ctrArguments);
+    const account = new Account(ctrArguments);
 
-  await account.initTokens();
+    await account.initTokens();
 
-  return account;
+    return account;
 }
 
 /**
@@ -48,22 +48,22 @@ async function createAccount(remoteEthNodeUrl, address, privateKey, params = {} 
  * @param {string} address
  */
 async function createVotes(account) {
-  const votes = new Votes({
-    account,
-    config: config[environment]
-  });
+    const votes = new Votes({
+        account,
+        config: config[environment]
+    });
 
-  await votes.init();
+    await votes.init();
 
-  return votes;
+    return votes;
 }
 
 module.exports = {
-  createAccount,
-  createVotes,
-  createProvider,
-  createGethClient,
-  utils: {
-      recoverPrivateKey,
-  },
+    createAccount,
+    createVotes,
+    createProvider,
+    createGethClient,
+    utils: {
+        recoverPrivateKey,
+    },
 };

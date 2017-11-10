@@ -49,7 +49,7 @@ class Account {
             'ETH': await this.getBalance()
         };
 
-        for ( const code in this.tokens ) {
+        for (const code in this.tokens) {
             balances[code.toUpperCase()] = (await this.getTokenBalance(code)).toString();
         }
 

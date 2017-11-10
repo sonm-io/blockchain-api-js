@@ -4,136 +4,136 @@ const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
-    constructor( src, gethClient, txParams = null ) {
-      this._geth = gethClient;
-      this._receipt = null;
-      this._hash = null;
-      this._promise = null;
+    constructor(src, gethClient, txParams = null) {
+        this._geth = gethClient;
+        this._receipt = null;
+        this._hash = null;
+        this._promise = null;
 
-      if (txParams !== null) {
-        this.validateTxParams(txParams);
-      }
-      this._txParams = txParams;
+        if (txParams !== null) {
+            this.validateTxParams(txParams);
+        }
+        this._txParams = txParams;
 
-      if (src instanceof TxResult) {
-        this._copyCtr(src);
-      } else if (src instanceof Promise) {
-        this._promise = src.then(result => this._processPromiseResult(result));
-      } else if (TxResult.checkTxHash(src)) {
-        this._hash = src;
-      } else {
-        throw new Error('Unknown transaction src');
-      }
+        if (src instanceof TxResult) {
+            this._copyCtr(src);
+        } else if (src instanceof Promise) {
+            this._promise = src.then(result => this._processPromiseResult(result));
+        } else if (TxResult.checkTxHash(src)) {
+            this._hash = src;
+        } else {
+            throw new Error('Unknown transaction src');
+        }
     }
 
     _copyCtr(txResult) {
-      if (txResult._hash) {
-        this._hash = txResult._hash;
-      } else {
-        this._promise = txResult._promise.then(result => this._processPromiseResult(result));
-      }
+        if (txResult._hash) {
+            this._hash = txResult._hash;
+        } else {
+            this._promise = txResult._promise.then(result => this._processPromiseResult(result));
+        }
     }
 
     _processPromiseResult(val) {
-      if (TxResult.checkTxHash(val)) {
-        this._hash = val;
-      } else if (val && TxResult.checkTxReceipt(val.receipt)) {
-        this._receipt = val.receipt;
-        this._hash = val.receipt.transactionHash;
-      }
+        if (TxResult.checkTxHash(val)) {
+            this._hash = val;
+        } else if (val && TxResult.checkTxReceipt(val.receipt)) {
+            this._receipt = val.receipt;
+            this._hash = val.receipt.transactionHash;
+        }
     }
 
     static checkTxHash(src) {
-      return typeof src === 'string' && src.startsWith('0x');
+        return typeof src === 'string' && src.startsWith('0x');
     }
 
     static checkTxReceipt(src) {
-      return src instanceof Object
-        && 'cumulativeGasUsed' in src;
+        return src instanceof Object
+            && 'cumulativeGasUsed' in src;
     }
 
     async getHash() {
-      await this._promise;
+        await this._promise;
 
-      return this._hash;
+        return this._hash;
     }
 
     async getTransaction() {
-      if (this._txParams === null) {
-        this._txParams = await this._geth.method('getTransaction')(await this.getHash());
-        this.validateTxParams(this._txParams);
-      }
+        if (this._txParams === null) {
+            this._txParams = await this._geth.method('getTransaction')(await this.getHash());
+            this.validateTxParams(this._txParams);
+        }
 
-      return this._txParams;
+        return this._txParams;
     }
 
     validateTxParams(txParams) {
-      const valid = typeof txParams === 'object'
-        && 'gasPrice' in txParams;
+        const valid = typeof txParams === 'object'
+            && 'gasPrice' in txParams;
 
-      if (!valid) {
-        throw new Error('incorrect txParams');
-      }
+        if (!valid) {
+            throw new Error('incorrect txParams');
+        }
     }
 
     async getTxPrice() {
-      const receipt = await this.getReceipt();
-      const transaction = await this.getTransaction();
+        const receipt = await this.getReceipt();
+        const transaction = await this.getTransaction();
 
-      return new BN(transaction.gasPrice).mul(receipt.gasUsed);
+        return new BN(transaction.gasPrice).mul(receipt.gasUsed);
     }
 
     async getConfirmationsNumber() {
-      const receipt = await this.getReceipt();
-      const currentBlockNumber = await this._geth.method('getBlockNumber')()
+        const receipt = await this.getReceipt();
+        const currentBlockNumber = await this._geth.method('getBlockNumber')()
 
-      return currentBlockNumber - receipt.blockNumber;
+        return currentBlockNumber - receipt.blockNumber;
     }
 
     async getReceipt() {
-      let result;  
+        let result;
 
-      await this._promise;
+        await this._promise;
 
-      if (!this._receipt) {
-        const hash = await this.getHash();
-        const promise = new Promise((done, reject) => {
-          const timeoutTask = setTimeout(() => reject(`getReceipt timeout: ${MAX_TIMEOUT}`), MAX_TIMEOUT);
+        if (!this._receipt) {
+            const hash = await this.getHash();
+            const promise = new Promise((done, reject) => {
+                const timeoutTask = setTimeout(() => reject(`getReceipt timeout: ${MAX_TIMEOUT}`), MAX_TIMEOUT);
 
-          const check = async () => {
-            const result = await this._geth.method('getTransactionReceipt')(hash);
+                const check = async () => {
+                    const result = await this._geth.method('getTransactionReceipt')(hash);
 
-            if (result) {
-              clearTimeout(timeoutTask);
-              done(result);
-            } else {
-              setTimeout(check, this._getPollingInterval());
-            }
-          };
+                    if (result) {
+                        clearTimeout(timeoutTask);
+                        done(result);
+                    } else {
+                        setTimeout(check, this._getPollingInterval());
+                    }
+                };
 
-          check();
-        });
+                check();
+            });
 
-        await promise.then(receipt => this._receipt = receipt);
-      }
+            await promise.then(receipt => this._receipt = receipt);
+        }
 
-      result = this._receipt;
+        result = this._receipt;
 
-      return result;
+        return result;
     }
 
     _getPollingInterval() {
-      const age = Date.now() - this.timestamp;
+        const age = Date.now() - this.timestamp;
 
-      const result = age > MINUTE
-        ? MINUTE
-        : 1000;
+        const result = age > MINUTE
+            ? MINUTE
+            : 1000;
 
-      return result;
+        return result;
     }
 
     async getInfo() {
-      return this._geth.method('getTransaction')(await this.getHash());
+        return this._geth.method('getTransaction')(await this.getHash());
     }
 }
 
