@@ -19,7 +19,7 @@ module.exports = function (json, password) {
         }, key => {
             derivedKey = key;
         });
-     } else {
+    } else {
         throw new Error('Unsupported key derivation scheme');
     }
 

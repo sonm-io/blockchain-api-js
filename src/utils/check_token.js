@@ -1,36 +1,36 @@
 'use strict';
 
-const Contract = require('truffle-contract');
 const invariant = require('fbjs/lib/invariant');
-const SnmToken = require('../../contracts/SNMT.json');
+const initContract = require('./init-contract');
 
 module.exports = async function isERC20(address, gethClient) {
-  invariant(address, 'address is not defined');
-  invariant(address.startsWith('0x'), 'address should starts with 0x');
-  invariant(gethClient, 'gethClient is not defined');
+    invariant(address, 'address is not defined');
+    invariant(address.startsWith('0x'), 'address should starts with 0x');
+    invariant(gethClient, 'gethClient is not defined');
 
-  //check code
-  if ( await gethClient.method('getCode')(address) !== '0x' ) {
+    try {
+        if (await gethClient.method('getCode')(address) !== '0x') {
+            const contractObject = await initContract('token', gethClient);
+            const contract = await contractObject.at(address);
 
-    const contractObject = Contract(SnmToken);
-    contractObject.setProvider(gethClient.provider);
+            const [name, symbol, decimals] = await Promise.all([
+                contract.name(),
+                contract.symbol(),
+                contract.decimals()
+            ]);
 
-    const contract = await contractObject.at(address);
+            return {
+                name,
+                symbol,
+                decimals,
+                contract: contract
+            };
+        } else {
+            return false;
+        }
+    } catch (err) {
+        console.log(err.stack);
 
-    const [ name, symbol, decimals] = await Promise.all([
-      await contract.name(),
-      await contract.symbol(),
-      await contract.decimals()
-    ]);
-
-    return {
-      name,
-      symbol,
-      decimals,
-    };
-  } else {
-    return false;
-  }
-
-  return result;
+        return false;
+    }
 };

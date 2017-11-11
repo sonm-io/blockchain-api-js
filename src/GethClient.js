@@ -4,37 +4,37 @@ const TransactionResult = require('./TransactionResult');
 const createAsyncMethods = require('./utils/create-async-web3-methods.js');
 
 module.exports = class GethClient {
-  constructor(provider) {
-    invariant(provider, 'provider is not defined');
+    constructor(provider) {
+        invariant(provider, 'provider is not defined');
 
-    this.web3 = new Web3(provider);
-    this.provider = provider;
-    this.methods = {};
-    this.gasPrice = null;
-  }
-
-  method(methodName) {
-    if (!this.methods[methodName]) {
-      Object.assign(
-        this.methods,
-        createAsyncMethods(this.web3, methodName)
-      );
+        this.web3 = new Web3(provider);
+        this.provider = provider;
+        this.methods = {};
+        this.gasPrice = null;
     }
 
-    return this.methods[methodName];
-  }
+    method(methodName) {
+        if (!this.methods[methodName]) {
+            Object.assign(
+                this.methods,
+                createAsyncMethods(this.web3, methodName)
+            );
+        }
 
-  async getGasPrice(force) {
-    if (force || !this.gasPrice) {
-      this.gasPrice = await this.method('getGasPrice')();
+        return this.methods[methodName];
     }
 
-    return this.gasPrice;
-  }
+    async getGasPrice(force) {
+        if (force || !this.gasPrice) {
+            this.gasPrice = await this.method('getGasPrice')();
+        }
 
-  async sendTransaction(tx) {
-    const hash = await this.method('sendTransaction')(tx);
+        return this.gasPrice;
+    }
 
-    return new TransactionResult(hash, this, tx);
-  }
+    async sendTransaction(tx) {
+        const hash = await this.method('sendTransaction')(tx);
+
+        return new TransactionResult(hash, this, tx);
+    }
 };
