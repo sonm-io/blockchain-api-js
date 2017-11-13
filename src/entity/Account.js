@@ -12,11 +12,10 @@ const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Account {
-    constructor({gethClient, address0x, config, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
+    constructor({gethClient, address0x, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
 
         invariant(gethClient, 'gethClient is not defined');
         invariant(address0x, 'address is not defined');
-        invariant(config, 'config is not defined');
         invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
         this.throwGasPriceError = throwGasPriceError;
@@ -24,14 +23,6 @@ class Account {
         this.geth = gethClient;
         this.address = address0x;
         this.tokens = {};
-        this.config = config;
-    }
-
-    async initTokens() {
-        //init snm token
-        for (const address of [this.config.contractAddress.token]) {
-            await this.addToken(address);
-        }
     }
 
     async addToken(address) {
@@ -46,11 +37,11 @@ class Account {
 
     async getBalances() {
         let balances = {
-            'ETH': await this.getBalance()
+            'eth': await this.getBalance()
         };
 
         for (const code in this.tokens) {
-            balances[code.toUpperCase()] = (await this.getTokenBalance(code)).toString();
+            balances[code] = (await this.getTokenBalance(code)).toString();
         }
 
         return balances;

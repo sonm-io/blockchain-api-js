@@ -34,36 +34,7 @@ before(async function () {
     VOTE = await createVotes(VASYA);
 });
 
-describe('Votes entity', function () {
-    this.timeout(120000);
 
-    it('should get votes list', async function () {
-        expect(await VOTE.getList()).to.be.an('array');
-    });
-
-    it('should get vote info', async function () {
-        const list = await VOTE.getList();
-
-        VOTE.setCurrent(list[0].address);
-        expect(await VOTE.getVoteInfo()).to.be.an('object')
-    });
-
-    it('should vote for option 1', async function () {
-        const list = await VOTE.getList();
-
-        VOTE.setCurrent(list[0].address);
-        const infoBefore = await VOTE.getVoteInfo();
-
-        //try to vote
-        const qty = 2;
-        await VOTE.vote(infoBefore.options[0].index, qty);
-
-        const infoAfter = await VOTE.getVoteInfo();
-
-        expect(infoBefore.options[0].votes).equal(infoAfter.options[0].votes - 1);
-        expect(infoBefore.options[0].weight).equal(infoAfter.options[0].weight - qty);
-    });
-});
 
 describe('Profile entity', function () {
     describe('ether', function () {
@@ -126,9 +97,45 @@ describe('Profile entity', function () {
     describe('utils', function () {
         this.timeout(10000);
 
+        it('should get balances for eth and snmt', async function () {
+            const balances = await VASYA.getBalances();
+            expect(balances).to.have.all.keys('eth', 'snmt');
+        });
+
         it('should check smartContract on address', async function () {
             expect(await isERC20(VASYA.tokens.snmt.contract.address, VASYA.geth)).to.be.an('object');
             expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
         });
+    });
+});
+
+describe('Votes entity', function () {
+    this.timeout(120000);
+
+    it('should get votes list', async function () {
+        expect(await VOTE.getList()).to.be.an('array');
+    });
+
+    it('should get vote info', async function () {
+        const list = await VOTE.getList();
+
+        VOTE.setCurrent(list[0].address);
+        expect(await VOTE.getVoteInfo()).to.be.an('object')
+    });
+
+    it('should vote for option 1', async function () {
+        const list = await VOTE.getList();
+
+        VOTE.setCurrent(list[0].address);
+        const infoBefore = await VOTE.getVoteInfo();
+
+        //try to vote
+        const qty = 2;
+        await VOTE.vote(infoBefore.options[0].index, qty);
+
+        const infoAfter = await VOTE.getVoteInfo();
+
+        expect(infoBefore.options[0].votes).equal(infoAfter.options[0].votes - 1);
+        expect(infoBefore.options[0].weight).equal(infoAfter.options[0].weight - qty);
     });
 });

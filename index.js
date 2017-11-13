@@ -38,7 +38,7 @@ async function createAccount(remoteEthNodeUrl, address, privateKey, params = {})
 
     const account = new Account(ctrArguments);
 
-    await account.initTokens();
+    await account.addToken(config[environment].contractAddress.token)
 
     return account;
 }
