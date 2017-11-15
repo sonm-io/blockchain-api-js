@@ -2,7 +2,7 @@
   "name": "sonm-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.min.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha ./test/*.test.js",
     "karma": "./node_modules/karma/bin/karma start --browsers Chrome --debug",
