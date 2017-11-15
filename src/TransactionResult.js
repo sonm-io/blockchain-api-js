@@ -83,11 +83,13 @@ class TxResult {
         return new BN(transaction.gasPrice).mul(receipt.gasUsed);
     }
 
-    async getConfirmationsNumber() {
-        const receipt = await this.getReceipt();
-        const currentBlockNumber = await this._geth.method('getBlockNumber')()
+    async getConfirmationsCount() {
+        const [receipt, currentBlockNumber] = await Promise.all([
+            this.getReceipt(),
+            this._geth.method('getBlockNumber')(),
+        ]);
 
-        return currentBlockNumber - receipt.blockNumber;
+        return (currentBlockNumber > receipt.blockNumber) ? currentBlockNumber - receipt.blockNumber : 0;
     }
 
     async getReceipt() {

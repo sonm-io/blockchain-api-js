@@ -5,7 +5,7 @@ const invariant = require('fbjs/lib/invariant');
 const TransactionResult = require('../TransactionResult');
 const BN = require('bignumber.js');
 const toHex = require('../utils/to-hex');
-const isERC20 = require('../utils/check_token');
+const isERC20 = require('../utils/check-token');
 
 const getBalance = get('c[0]');
 const GAS_LIMIT_DEFAULT = 200000;

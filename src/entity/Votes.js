@@ -14,6 +14,7 @@ class Votes {
         this._gasLimit = account.getGasLimit();
         this._token = account.tokens.snmt;
         this._votes = {};
+        this._votesInfo = {};
         this._currentVote = 0;
         this._config = config;
     }
@@ -28,9 +29,7 @@ class Votes {
             const addresses = await this._registry.getVotings();
 
             for (const address of addresses) {
-                if (address !== '0x0000000000000000000000000000000000000001') {
-                    this._votes[address] = await this._voting.at(address);
-                }
+                this._votes[address] = await this._voting.at(address);
             }
         }
 
@@ -40,19 +39,10 @@ class Votes {
     async getList() {
         let result = [];
         for (const address in this._votes) {
-            const {title, description} = await Promise.all([
-                this._votes[address].getTitle(),
-                this._votes[address].getDescription(),
-            ]);
-
-            result.push({
-                address: address,
-                title: title,
-                description: description,
-            })
+            await this.getVoteInfo(address)
         }
 
-        return result;
+        return _.values(this._votesInfo);
     }
 
     setCurrent(address) {
@@ -63,21 +53,45 @@ class Votes {
         return this._currentVote;
     }
 
-    async getVoteInfo() {
+    async getVoteInfo( address = null, useCache = true ) {
+        address = address || this.getCurrent();
+
+        if ( !this._votesInfo[address] || !useCache ) {
+            const [title, description, starttime, endtime, finishedAheadTime, winner] = await Promise.all([
+                this._votes[address].getTitle(),
+                this._votes[address].getDescription(),
+                this._votes[address].getStartTime(),
+                this._votes[address].getEndTime(),
+                this._votes[address].isFinishedAheadOfTime(),
+                this._votes[address].getWinnerOption()
+            ]);
+
+            this._votesInfo[address] = {
+                address,
+                title,
+                description,
+                starttime: _.get(starttime, 'c[0]'),
+                endtime: _.get(endtime, 'c[0]'),
+                finishedAheadTime,
+                winner,
+                options: [],
+            }
+        }
+
+        return this._votesInfo[address];
+    }
+
+    async getVoteFullInfo( useCache = false ) {
         const vote = this._votes[this.getCurrent()];
 
-        const [title, description] = await Promise.all([
-            vote.getTitle(),
-            vote.getDescription(),
+
+        const [ info, options] = await Promise.all([
+            this.getVoteInfo(this.getCurrent(), useCache ),
+            vote.getNumberOfOptions()
         ]);
 
-        let info = {
-            title: title,
-            description: description,
-            options: [],
-        };
-
-        const options = await vote.getNumberOfOptions();
+        //update options anyway
+        info.options = [];
 
         for (let i = 0; i < options.toNumber(); i++) {
             const [title, description, votes, weights] = await Promise.all([
@@ -101,17 +115,40 @@ class Votes {
 
     async vote(option, qt = 1) {
         const vote = this._votes[this.getCurrent()];
-
-        const params = {
-            from: this._accountAddress,
-            gasLimit: toHex(this._gasLimit),
-        };
+        const params = this.getTransactionParams();
 
         const result = await this._token.contract.approve(this.getCurrent(), qt, params);
 
         if (result) {
             return await vote.voteFor(option, params);
         }
+    }
+
+    async getVoteBalanceForOptions() {
+        const res = [];
+        const vote = this._votes[this.getCurrent()]
+        const options = await vote.getNumberOfOptions();
+
+        for (let i = 0; i < options.toNumber(); i++) {
+            res.push(
+                (await vote.getBalanceFor(this._accountAddress, i, this.getTransactionParams())).toNumber()
+            ) ;
+        }
+
+        return res;
+    }
+
+    async getVoteBalance() {
+        const vote = this._votes[this.getCurrent()]
+
+        return (await vote.getBalanceOf(this._accountAddress, this.getTransactionParams())).toNumber()
+    }
+
+    getTransactionParams() {
+        return {
+            from: this._accountAddress,
+            gasLimit: toHex(this._gasLimit),
+        };
     }
 }
 

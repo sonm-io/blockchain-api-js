@@ -4,7 +4,20 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "getEndBlockNumber",
+      "name": "getDescription",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEndTime",
       "outputs": [
         {
           "name": "",
@@ -16,12 +29,21 @@
     },
     {
       "constant": true,
-      "inputs": [],
-      "name": "getDescription",
+      "inputs": [
+        {
+          "name": "voter",
+          "type": "address"
+        },
+        {
+          "name": "optionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBalanceFor",
       "outputs": [
         {
           "name": "",
-          "type": "string"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -61,7 +83,38 @@
     {
       "constant": true,
       "inputs": [],
+      "name": "isFinishedAheadOfTime",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
       "name": "getNumberOfOptions",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "voter",
+          "type": "address"
+        }
+      ],
+      "name": "getBalanceOf",
       "outputs": [
         {
           "name": "",
@@ -91,6 +144,23 @@
     },
     {
       "constant": true,
+      "inputs": [],
+      "name": "getWinnerOption",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
       "inputs": [
         {
           "name": "_optionId",
@@ -109,13 +179,8 @@
     },
     {
       "constant": true,
-      "inputs": [
-        {
-          "name": "_optionId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getVotesFor",
+      "inputs": [],
+      "name": "getStartTime",
       "outputs": [
         {
           "name": "",
@@ -127,8 +192,13 @@
     },
     {
       "constant": true,
-      "inputs": [],
-      "name": "getStartBlockNumber",
+      "inputs": [
+        {
+          "name": "_optionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVotesFor",
       "outputs": [
         {
           "name": "",
@@ -173,5 +243,5 @@
   "unlinked_binary": "0x",
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1509368344033
+  "updated_at": 1510582251797
 }

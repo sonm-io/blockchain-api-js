@@ -2,9 +2,7 @@ const {expect} = require('chai');
 const sonmApi = require('../index');
 const BN = require('bignumber.js');
 const getPrivateKey = require('../src/utils/recover-private-key');
-const isERC20 = require('../src/utils/check_token');
-
-const {createAccount, createVotes} = sonmApi;
+const isERC20 = require('../src/utils/check-token');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
@@ -23,18 +21,33 @@ before(async function () {
     ]);
     console.log('done');
 
+    const {createClient, createVotes} = sonmApi;
+
+    const vasyaGethClient = createClient(URL_REMOTE_GETH_NODE, vasyaCfg.address, {limitGasPrice: new BN('30000000000')});
+    const petyaGethClient = createClient(URL_REMOTE_GETH_NODE, petyaCfg.address, {limitGasPrice: new BN('30000000000')});
+
     console.log('Creating test accounts...');
-    VASYA = await createAccount(URL_REMOTE_GETH_NODE, vasyaCfg.address, vasyaPrivateKey.toString('hex'), {limitGasPrice: new BN('30000000000')});
-    PETYA = await createAccount(URL_REMOTE_GETH_NODE, petyaCfg.address, petyaPrivateKey.toString('hex'), {limitGasPrice: new BN('30000000000')});
+    VASYA = await vasyaGethClient.createAccount();
+    PETYA = await petyaGethClient.createAccount();
     console.log('done');
+
+    console.log('Get balances without privateKeys...');
+    const [vasyaBalance, petyaBalance] = await Promise.all([
+        VASYA.getBalance(),
+        PETYA.getBalance(),
+    ]);
+
+    console.log(`Ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
+
+    console.log('Set private keys....');
+    vasyaGethClient.setPrivateKey(vasyaPrivateKey.toString('hex'));
+    petyaGethClient.setPrivateKey(petyaPrivateKey.toString('hex'));
 
     const gasPrice = await VASYA.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
 
     VOTE = await createVotes(VASYA);
 });
-
-
 
 describe('Profile entity', function () {
     describe('ether', function () {
@@ -54,8 +67,9 @@ describe('Profile entity', function () {
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
-            const receipt = await txResult.getReceipt();
-            //console.log(receipt);
+            //const receipt = await txResult.getReceipt();
+
+            console.log('confirmations', await txResult.getConfirmationsCount());
 
             const txPrice = await txResult.getTxPrice();
 
@@ -127,15 +141,32 @@ describe('Votes entity', function () {
         const list = await VOTE.getList();
 
         VOTE.setCurrent(list[0].address);
-        const infoBefore = await VOTE.getVoteInfo();
+        const infoBefore = await VOTE.getVoteFullInfo();
+        const balanceBefore = await VOTE.getVoteBalance();
+        const balanceOptionsBefore = await VOTE.getVoteBalanceForOptions();
+
+        // console.log(infoBefore);
+        // console.log(balanceBefore);
+        // console.log(balanceOptionsBefore);
 
         //try to vote
+        const option = infoBefore.options[1].index;
         const qty = 2;
-        await VOTE.vote(infoBefore.options[0].index, qty);
+        console.log(`Try to vote for option ${option} by ${qty} tokens....`);
 
-        const infoAfter = await VOTE.getVoteInfo();
+        await VOTE.vote(option, qty);
 
-        expect(infoBefore.options[0].votes).equal(infoAfter.options[0].votes - 1);
-        expect(infoBefore.options[0].weight).equal(infoAfter.options[0].weight - qty);
+        const infoAfter = await VOTE.getVoteFullInfo();
+        const balanceAfter = await VOTE.getVoteBalance();
+        const balanceOptionsAfter = await VOTE.getVoteBalanceForOptions();
+
+        // console.log(infoAfter);
+        // console.log(balanceAfter);
+        // console.log(balanceOptionsAfter);
+
+        expect(infoBefore.options[option].votes).equal(infoAfter.options[option].votes - 1);
+        expect(infoBefore.options[option].weight).equal(infoAfter.options[option].weight - qty);
+        expect(balanceBefore).equal(balanceAfter - qty);
+        expect(balanceOptionsBefore[option]).equal(balanceOptionsAfter[option] - qty);
     });
 });

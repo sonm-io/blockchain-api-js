@@ -13,6 +13,11 @@ module.exports = class GethClient {
         this.gasPrice = null;
     }
 
+    setProvider(provider) {
+        this.provider = provider;
+        this.web3.setProvider(provider);
+    }
+
     method(methodName) {
         if (!this.methods[methodName]) {
             Object.assign(
