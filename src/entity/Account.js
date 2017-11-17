@@ -47,6 +47,38 @@ class Account {
         return balances;
     }
 
+    async getCurrencyBalances() {
+        let balances = {
+            '0x': await this.getBalance()
+        };
+
+        for (const code in this.tokens) {
+            balances[this.tokens[code].address] = (await this.getTokenBalance(code)).toString();
+        }
+
+        return balances;
+    }
+
+    async getCurrencies() {
+        let currencies = [{
+            address: '0x',
+            symbol: 'ETH',
+            name: 'Ethereum',
+        }];
+
+        for (const code in this.tokens) {
+            const token = this.tokens[code];
+
+            currencies.push({
+                symbol: token.symbol.toUpperCase(),
+                address: token.address,
+                name: token.name,
+            });
+        }
+
+        return currencies;
+    }
+
     async getBalance() {
         const result = await this.geth.method('getBalance')(this.getAddress());
 

@@ -23,6 +23,7 @@ module.exports = async function isERC20(address, gethClient) {
                 name,
                 symbol,
                 decimals,
+                address,
                 contract: contract
             };
         } else {
