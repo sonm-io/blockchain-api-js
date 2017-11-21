@@ -96,7 +96,7 @@ describe('Profile entity', function () {
 
             console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
 
-            const txResult = await VASYA.sendTokens(PETYA, qty);
+            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty);
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
@@ -112,12 +112,15 @@ describe('Profile entity', function () {
         this.timeout(10000);
 
         it('should get balances for eth and snmt', async function () {
-            const balances = await VASYA.getBalances();
-            expect(balances).to.have.all.keys('eth', 'snmt');
+            expect(Object.keys(VASYA.tokens).length).equal(1);
+
+            const balances = await VASYA.getCurrencyBalances();
+
+            expect(balances).to.have.all.keys('0x', Object.keys(VASYA.tokens)[0]);
         });
 
         it('should check smartContract on address', async function () {
-            expect(await isERC20(VASYA.tokens.snmt.contract.address, VASYA.geth)).to.be.an('object');
+            expect(await isERC20(Object.keys(VASYA.tokens)[0], VASYA.geth)).to.be.an('object');
             expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
         });
     });

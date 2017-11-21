@@ -12,7 +12,7 @@ class Votes {
         this._accountAddress = account.getAddress();
         this._geth = account.geth;
         this._gasLimit = account.getGasLimit();
-        this._token = account.tokens.snmt;
+        this._token = account.tokens[Object.keys(account.tokens)[0]];
         this._votes = {};
         this._votesInfo = {};
         this._currentVote = 0;
