@@ -126,50 +126,50 @@ describe('Profile entity', function () {
     });
 });
 
-describe('Votes entity', function () {
-    this.timeout(120000);
-
-    it('should get votes list', async function () {
-        expect(await VOTE.getList()).to.be.an('array');
-    });
-
-    it('should get vote info', async function () {
-        const list = await VOTE.getList();
-
-        VOTE.setCurrent(list[0].address);
-        expect(await VOTE.getVoteInfo()).to.be.an('object')
-    });
-
-    it('should vote for option 1', async function () {
-        const list = await VOTE.getList();
-
-        VOTE.setCurrent(list[0].address);
-        const infoBefore = await VOTE.getVoteFullInfo();
-        const balanceBefore = await VOTE.getVoteBalance();
-        const balanceOptionsBefore = await VOTE.getVoteBalanceForOptions();
-
-        // console.log(infoBefore);
-        // console.log(balanceBefore);
-        // console.log(balanceOptionsBefore);
-
-        //try to vote
-        const option = infoBefore.options[1].index;
-        const qty = 2;
-        console.log(`Try to vote for option ${option} by ${qty} tokens....`);
-
-        await VOTE.vote(option, qty);
-
-        const infoAfter = await VOTE.getVoteFullInfo();
-        const balanceAfter = await VOTE.getVoteBalance();
-        const balanceOptionsAfter = await VOTE.getVoteBalanceForOptions();
-
-        // console.log(infoAfter);
-        // console.log(balanceAfter);
-        // console.log(balanceOptionsAfter);
-
-        expect(infoBefore.options[option].votes).equal(infoAfter.options[option].votes - 1);
-        expect(infoBefore.options[option].weight).equal(infoAfter.options[option].weight - qty);
-        expect(balanceBefore).equal(balanceAfter - qty);
-        expect(balanceOptionsBefore[option]).equal(balanceOptionsAfter[option] - qty);
-    });
-});
+// describe('Votes entity', function () {
+//     this.timeout(120000);
+//
+//     it('should get votes list', async function () {
+//         expect(await VOTE.getList()).to.be.an('array');
+//     });
+//
+//     it('should get vote info', async function () {
+//         const list = await VOTE.getList();
+//
+//         VOTE.setCurrent(list[0].address);
+//         expect(await VOTE.getVoteInfo()).to.be.an('object')
+//     });
+//
+//     it('should vote for option 1', async function () {
+//         const list = await VOTE.getList();
+//
+//         VOTE.setCurrent(list[0].address);
+//         const infoBefore = await VOTE.getVoteFullInfo();
+//         const balanceBefore = await VOTE.getVoteBalance();
+//         const balanceOptionsBefore = await VOTE.getVoteBalanceForOptions();
+//
+//         // console.log(infoBefore);
+//         // console.log(balanceBefore);
+//         // console.log(balanceOptionsBefore);
+//
+//         //try to vote
+//         const option = infoBefore.options[1].index;
+//         const qty = 2;
+//         console.log(`Try to vote for option ${option} by ${qty} tokens....`);
+//
+//         await VOTE.vote(option, qty);
+//
+//         const infoAfter = await VOTE.getVoteFullInfo();
+//         const balanceAfter = await VOTE.getVoteBalance();
+//         const balanceOptionsAfter = await VOTE.getVoteBalanceForOptions();
+//
+//         // console.log(infoAfter);
+//         // console.log(balanceAfter);
+//         // console.log(balanceOptionsAfter);
+//
+//         expect(infoBefore.options[option].votes).equal(infoAfter.options[option].votes - 1);
+//         expect(infoBefore.options[option].weight).equal(infoAfter.options[option].weight - qty);
+//         expect(balanceBefore).equal(balanceAfter - qty);
+//         expect(balanceOptionsBefore[option]).equal(balanceOptionsAfter[option] - qty);
+//     });
+// });

@@ -1,7 +1,8 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const _ = require('lodash');
+const get = require('lodash/fp/get');
+const values = require('lodash/fp/values');
 const toHex = require('../utils/to-hex');
 const initContract = require('../utils/init-contract');
 
@@ -42,7 +43,7 @@ class Votes {
             await this.getVoteInfo(address)
         }
 
-        return _.values(this._votesInfo);
+        return values(this._votesInfo);
     }
 
     setCurrent(address) {
@@ -70,8 +71,8 @@ class Votes {
                 address,
                 title,
                 description,
-                starttime: _.get(starttime, 'c[0]'),
-                endtime: _.get(endtime, 'c[0]'),
+                starttime: get(starttime, 'c[0]'),
+                endtime: get(endtime, 'c[0]'),
                 finishedAheadTime,
                 winner,
                 options: [],

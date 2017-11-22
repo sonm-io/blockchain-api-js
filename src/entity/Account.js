@@ -37,14 +37,21 @@ class Account {
     }
 
     async getCurrencyBalances() {
-        let balances = {
-            '0x': await this.getBalance()
-        };
+        let requests = [
+            this.getBalance()
+        ];
 
-        for (const code in this.tokens) {
-            const address = this.tokens[code].address;
+        for (const address in this.tokens) {
+            requests.push(this.getTokenBalance(address))
+        }
 
-            balances[address] = (await this.getTokenBalance(address)).toString();
+        const results = await Promise.all(requests);
+
+        const balances = {};
+
+        for (let index in results) {
+            const address = parseInt(index) === 0 ? '0x' : Object.keys(this.tokens)[index-1];
+            balances[address] = results[index].toString()
         }
 
         return balances;
