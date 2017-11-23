@@ -4,14 +4,10 @@ const invariant = require('fbjs/lib/invariant');
 const contract = require('truffle-contract');
 
 const contractToken = require('../../contracts/SNMT.json');
-const contractVotingRegistry = require('../../contracts/VotingRegistry.json');
-const contractVoting = require('../../contracts/Voting.json');
 
 //init contracts
 const contracts = {
     token: contractToken,
-    votingRegistry: contractVotingRegistry,
-    voting: contractVoting
 };
 
 module.exports = async function (name, gethClient) {

@@ -1,6 +1,5 @@
 const providerFactory = require('./src/provider/provider-factory');
 const Account = require('./src/entity/Account');
-const Votes = require('./src/entity/Votes');
 const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const memoize = require('./src/utils/memoization');
@@ -16,22 +15,7 @@ const createGethClient = memoize.memoize(function createGethClient(provider) {
 
 const createProvider = memoize.memoize(providerFactory);
 
-/**
- * create API entity Votes
- * @param {string} address
- */
-async function createVotes(account) {
-    const votes = new Votes({
-        account,
-        config: config[environment]
-    });
-
-    await votes.init();
-
-    return votes;
-}
-
-function createClient(remoteEthNodeUrl, address, params = {}) {
+function createSonmFactory(remoteEthNodeUrl, address, params = {}) {
     const address0x = add0x(address);
 
     const provider = createProvider(remoteEthNodeUrl);
@@ -77,8 +61,7 @@ function createClient(remoteEthNodeUrl, address, params = {}) {
 
 
 module.exports = {
-    createClient,
-    createVotes,
+    createSonmFactory,
     utils: {
         recoverPrivateKey,
     },
