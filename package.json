@@ -8,8 +8,8 @@
     "karma": "./node_modules/karma/bin/karma start --browsers Chrome --debug",
     "build": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "SONM Team",
+  "license": "MIT",
   "dependencies": {
     "bignumber.js": "git+https://github.com/frozeman/bignumber.js-nolookahead.git",
     "browserify-aes": "^1.1.1",

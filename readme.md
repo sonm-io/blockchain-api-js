@@ -1,1 +1,1 @@
-js api for sonm
+Cool tools for SONM Wallet
