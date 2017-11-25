@@ -60,7 +60,7 @@ class Account {
     async getCurrencies() {
         let currencies = [{
             address: '0x',
-            symbol: 'ETH',
+            symbol: 'wei',
             name: 'Ethereum',
         }];
 
