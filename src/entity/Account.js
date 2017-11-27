@@ -117,15 +117,16 @@ class Account {
         return result;
     }
 
-    async sendTokens(to, amount, tokenAddress) {
+    async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {
         //get first one
         if ( !tokenAddress ) {
             tokenAddress = Object.keys(this.tokens)[0];
         }
 
         const qty = toHex(amount);
-        const gasLimit = toHex(await this.getGasLimit());
-        const gasPrice = toHex(await this.getGasPrice());
+
+        gasLimit = gasLimit || toHex(await this.getGasLimit());
+        gasPrice = gasPrice || toHex(await this.getGasPrice());
 
         const resultPromise = this.tokens[tokenAddress].contract.transfer(
             this.normalizeTarget(to),
@@ -140,9 +141,10 @@ class Account {
         return new TransactionResult(resultPromise, this.geth);
     }
 
-    async sendEther(to, amount) {
-        const gasLimit = toHex(await this.getGasLimit());
-        const gasPrice = toHex(await this.getGasPrice());
+    async sendEther(to, amount, gasLimit, gasPrice) {
+        gasLimit = gasLimit || toHex(await this.getGasLimit());
+        gasPrice = gasPrice || toHex(await this.getGasPrice());
+
         const value = toHex(amount);
 
         const tx = {
