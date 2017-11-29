@@ -30,8 +30,6 @@ module.exports = async function isERC20(address, gethClient) {
             return false;
         }
     } catch (err) {
-        console.log(err.stack);
-
         return false;
     }
 };
