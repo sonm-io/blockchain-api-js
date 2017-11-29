@@ -24,6 +24,7 @@ class Account {
         this.geth = gethClient;
         this.address = address0x;
         this.tokens = {};
+        this.nonce = 0;
     }
 
     async addToken(address) {
@@ -124,6 +125,10 @@ class Account {
             tokenAddress = Object.keys(this.tokens)[0];
         }
 
+        if (!this.nonce) {
+            this.nonce = await this.geth.method('getTransactionCount')(this.getAddress());
+        }
+
         const qty = toHex(amount);
 
         gasLimit = gasLimit || toHex(await this.getGasLimit());
@@ -136,13 +141,20 @@ class Account {
                 from: this.getAddress(),
                 gasLimit,
                 gasPrice,
+                nonce: toHex(this.nonce),
             }
         );
+
+        this.nonce++;
 
         return new TransactionResult(resultPromise, this.geth);
     }
 
     async sendEther(to, amount, gasLimit, gasPrice) {
+        if (!this.nonce) {
+            this.nonce = await this.geth.method('getTransactionCount')(this.getAddress());
+        }
+
         gasLimit = gasLimit || toHex(await this.getGasLimit());
         gasPrice = gasPrice || toHex(await this.getGasPrice());
 
@@ -154,7 +166,10 @@ class Account {
             gasPrice,
             value,
             to: this.normalizeTarget(to),
+            nonce: toHex(this.nonce),
         };
+
+        this.nonce++;
 
         return this.geth.sendTransaction(tx);
     }

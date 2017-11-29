@@ -60,7 +60,7 @@ describe('Profile entity', function () {
             ]);
 
             console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
-
+            
             const txResult = await VASYA.sendEther(PETYA, qty, 500000);
 
             console.log(`transaction hash ${await txResult.getHash()}`);
