@@ -71,6 +71,7 @@ class Account {
                 symbol: token.symbol.toLowerCase(),
                 address: token.address,
                 name: token.name,
+                decimals: token.decimals,
             });
         }
 
