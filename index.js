@@ -15,14 +15,11 @@ const createGethClient = memoize.memoize(function createGethClient(provider) {
 
 const createProvider = memoize.memoize(providerFactory);
 
-function createSonmFactory(remoteEthNodeUrl, address, params = {}) {
-    const address0x = add0x(address);
-
+function createSonmFactory(remoteEthNodeUrl, params = {}) {
     const provider = createProvider(remoteEthNodeUrl);
     const gethClient = createGethClient(provider);
 
     const ctrArguments = {
-        address0x,
         gethClient,
         config: config[environment],
     };
@@ -35,12 +32,20 @@ function createSonmFactory(remoteEthNodeUrl, address, params = {}) {
      * @param {string} address
      * @param {string} privateKey
      */
-    async function createAccount() {
+    async function createAccount(address) {
+        const address0x = add0x(address);
+
+        ctrArguments.address0x = address0x;
+
         const account = new Account(ctrArguments);
 
         await account.addToken(config[environment].contractAddress.token);
 
         return account;
+    }
+
+    async function getGasPrice() {
+        return await gethClient.getGasPrice();
     }
 
     function createTxResult(hash) {
@@ -53,6 +58,7 @@ function createSonmFactory(remoteEthNodeUrl, address, params = {}) {
     }
 
     return {
+        getGasPrice,
         createAccount,
         createTxResult,
         setPrivateKey

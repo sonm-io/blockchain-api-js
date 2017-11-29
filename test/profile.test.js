@@ -23,12 +23,12 @@ before(async function () {
 
     const {  createSonmFactory } = sonmApi;
 
-    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, vasyaCfg.address, {limitGasPrice: new BN('30000000000')});
-    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, petyaCfg.address, {limitGasPrice: new BN('30000000000')});
+    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, {limitGasPrice: new BN('30000000000')});
+    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, {limitGasPrice: new BN('30000000000')});
 
     console.log('Creating test accounts...');
-    VASYA = await vasyaGethClient.createAccount();
-    PETYA = await petyaGethClient.createAccount();
+    VASYA = await vasyaGethClient.createAccount(vasyaCfg.address);
+    PETYA = await petyaGethClient.createAccount(petyaCfg.address);
     console.log('done');
 
     console.log('Get balances without privateKeys...');
@@ -43,7 +43,7 @@ before(async function () {
     vasyaGethClient.setPrivateKey(vasyaPrivateKey.toString('hex'));
     petyaGethClient.setPrivateKey(petyaPrivateKey.toString('hex'));
 
-    const gasPrice = await VASYA.getGasPrice();
+    const gasPrice = await vasyaGethClient.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
 });
 
