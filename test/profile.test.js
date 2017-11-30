@@ -43,7 +43,7 @@ before(async function () {
     vasyaGethClient.setPrivateKey(vasyaPrivateKey.toString('hex'));
     petyaGethClient.setPrivateKey(petyaPrivateKey.toString('hex'));
 
-    const gasPrice = await vasyaGethClient.getGasPrice();
+    const gasPrice = await vasyaGethClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
 });
 
@@ -60,7 +60,7 @@ describe('Profile entity', function () {
             ]);
 
             console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
-            
+
             const txResult = await VASYA.sendEther(PETYA, qty, 500000);
 
             console.log(`transaction hash ${await txResult.getHash()}`);

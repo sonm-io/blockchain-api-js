@@ -44,10 +44,6 @@ function createSonmFactory(remoteEthNodeUrl, params = {}) {
         return account;
     }
 
-    async function getGasPrice() {
-        return await gethClient.getGasPrice();
-    }
-
     function createTxResult(hash) {
         return new TransactionResult(hash, gethClient);
     }
@@ -58,7 +54,7 @@ function createSonmFactory(remoteEthNodeUrl, params = {}) {
     }
 
     return {
-        getGasPrice,
+        gethClient,
         createAccount,
         createTxResult,
         setPrivateKey
