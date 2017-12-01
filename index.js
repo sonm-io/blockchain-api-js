@@ -6,6 +6,8 @@ const memoize = require('./src/utils/memoization');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 const TransactionResult = require('./src/TransactionResult');
 
+const { fromWei, toWei } = require('./src/utils/format-ether');
+
 const config = require('./config');
 const environment = config.environment || 'development';
 
@@ -66,5 +68,8 @@ module.exports = {
     createSonmFactory,
     utils: {
         recoverPrivateKey,
+        add0x,
+        fromWei,
+        toWei,
     },
 };
