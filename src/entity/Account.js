@@ -63,6 +63,7 @@ class Account {
             address: '0x',
             symbol: 'eth',
             name: 'Ethereum',
+            decimals: '18',
         }];
 
         for (const tokenAddress in this.tokens) {
