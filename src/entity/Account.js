@@ -1,6 +1,5 @@
 'use strict';
 
-const get = require('lodash/fp/get');
 const invariant = require('fbjs/lib/invariant');
 const TransactionResult = require('../TransactionResult');
 const BN = require('bignumber.js');
@@ -8,7 +7,6 @@ const toHex = require('../utils/to-hex');
 const isERC20 = require('../utils/check-token');
 const add0x = require('../utils/add-0x');
 
-const getBalance = get('c[0]');
 const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
@@ -82,10 +80,7 @@ class Account {
 
     async getBalance() {
         const result = await this.geth.method('getBalance')(this.getAddress());
-
-        return result
-            ? String(result)
-            : result;
+        return result.toString();
     }
 
     async getTokenBalance(tokenAddress) {
@@ -95,8 +90,7 @@ class Account {
         }
 
         const result = await this.tokens[tokenAddress].contract.balanceOf(this.address);
-
-        return getBalance(result);
+        return result.toString();
     }
 
     getAddress() {
