@@ -1,6 +1,6 @@
 const ethUtil = require('ethereumjs-util');
 const Buffer = require('buffer').Buffer;
-const crypto = require('crypto');
+const crypto = require('crypto-browserify');
 const scryptjs = require('scrypt-async');
 
 module.exports = function(passphrase = '', opts = {})
@@ -45,7 +45,7 @@ module.exports = function(passphrase = '', opts = {})
     }
 
     const ciphertext = Buffer.concat([cipher.update(private), cipher.final()]);
-    const mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
+    const mac = ethUtil.sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), new Buffer(ciphertext, 'hex')]));
 
     return {
         version: 3,

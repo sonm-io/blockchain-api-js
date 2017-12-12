@@ -4,7 +4,7 @@ const BN = require('bignumber.js');
 const getPrivateKey = require('../src/utils/recover-private-key');
 const newAccount = require('../src/utils/new-account');
 const isERC20 = require('../src/utils/check-token');
-const crypto = require('crypto');
+const crypto = require('crypto-browserify');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 

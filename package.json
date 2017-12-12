@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "bignumber.js": "git+https://github.com/frozeman/bignumber.js-nolookahead.git",
+    "browserify": "^14.5.0",
     "browserify-aes": "^1.1.1",
     "buffer": "^5.0.8",
     "crypto-browserify": "^3.12.0",
