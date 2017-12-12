@@ -23,10 +23,10 @@ before(async function () {
     ]);
     console.log('done');
 
-    const {  createSonmFactory } = sonmApi;
+    const { createSonmFactory } = sonmApi;
 
-    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, {limitGasPrice: new BN('30000000000')});
-    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, {limitGasPrice: new BN('30000000000')});
+    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby', {limitGasPrice: new BN('30000000000')});
+    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby', {limitGasPrice: new BN('30000000000')});
 
     console.log('Creating test accounts...');
     VASYA = await vasyaGethClient.createAccount(vasyaCfg.address);
@@ -47,6 +47,9 @@ before(async function () {
 
     const gasPrice = await vasyaGethClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
+
+    const sonmTokenAddress = vasyaGethClient.getSonmTokenAddress();
+    console.log('Sonm token address: ', sonmTokenAddress);
 });
 
 describe('Profile entity', function () {
@@ -72,11 +75,6 @@ describe('Profile entity', function () {
             const privateKey = getPrivateKey(json, password);
 
             expect(privateKey).to.be.an('string');
-        });
-
-        it('should return sonm token address', async function () {
-            const sonmTokenAddress = sonmApi.utils.getSonmTokenAddress();
-            expect(sonmTokenAddress).to.be.an('string');
         });
     });
 

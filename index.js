@@ -10,7 +10,6 @@ const TransactionResult = require('./src/TransactionResult');
 const { fromWei, toWei } = require('./src/utils/format-ether');
 
 const config = require('./config');
-const environment = config.environment || 'development';
 
 const createGethClient = memoize.memoize(function createGethClient(provider) {
     return new GethClient(provider);
@@ -18,13 +17,14 @@ const createGethClient = memoize.memoize(function createGethClient(provider) {
 
 const createProvider = memoize.memoize(providerFactory);
 
-function createSonmFactory(remoteEthNodeUrl, params = {}) {
+function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
     const provider = createProvider(remoteEthNodeUrl);
     const gethClient = createGethClient(provider);
+    const chainConfig = config[chainId];
 
     const ctrArguments = {
         gethClient,
-        config: config[environment],
+        config: chainConfig,
     };
 
     Object.assign(ctrArguments, params);
@@ -42,7 +42,7 @@ function createSonmFactory(remoteEthNodeUrl, params = {}) {
 
         const account = new Account(ctrArguments);
 
-        await account.addToken(config[environment].contractAddress.token);
+        await account.addToken(chainConfig.contractAddress.token);
 
         return account;
     }
@@ -56,17 +56,18 @@ function createSonmFactory(remoteEthNodeUrl, params = {}) {
         provider.setPrivateKey(privateKey0x);
     }
 
+    function getSonmTokenAddress() {
+        return chainConfig.contractAddress.token;
+    }
+
     return {
         gethClient,
         createAccount,
         createTxResult,
-        setPrivateKey
+        setPrivateKey,
+        getSonmTokenAddress,
     };
 };
-
-function getSonmTokenAddress() {
-    return config[environment].contractAddress.token;
-}
 
 module.exports = {
     createSonmFactory,
@@ -76,6 +77,5 @@ module.exports = {
         newAccount,
         fromWei,
         toWei,
-        getSonmTokenAddress,
     },
 };
