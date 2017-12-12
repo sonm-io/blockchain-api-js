@@ -2,7 +2,9 @@ const {expect} = require('chai');
 const sonmApi = require('../index');
 const BN = require('bignumber.js');
 const getPrivateKey = require('../src/utils/recover-private-key');
+const newAccount = require('../src/utils/new-account');
 const isERC20 = require('../src/utils/check-token');
+const crypto = require('crypto');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
@@ -48,6 +50,36 @@ before(async function () {
 });
 
 describe('Profile entity', function () {
+    describe('utils', function () {
+        this.timeout(10000);
+
+        it('should get balances for eth and snmt', async function () {
+            expect(Object.keys(VASYA.tokens).length).equal(1);
+
+            const balances = await VASYA.getCurrencyBalances();
+
+            expect(balances).to.have.all.keys('0x', Object.keys(VASYA.tokens)[0]);
+        });
+
+        it('should check smartContract on address', async function () {
+            expect(await isERC20(Object.keys(VASYA.tokens)[0], VASYA.geth)).to.be.an('object');
+            expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
+        });
+
+        it('should generate new account and recover private key from it', async function () {
+            const password = new Buffer(crypto.randomBytes(10), 'hex');
+            const json = newAccount(password);
+            const privateKey = getPrivateKey(json, password);
+
+            expect(privateKey).to.be.an('string');
+        });
+
+        it('should return sonm token address', async function () {
+            const sonmTokenAddress = sonmApi.utils.getSonmTokenAddress();
+            expect(sonmTokenAddress).to.be.an('string');
+        });
+    });
+
     describe('ether', function () {
         it('should send ether from VASYA to PETYA', async function () {
             this.timeout(+Infinity);
@@ -103,23 +135,6 @@ describe('Profile entity', function () {
 
             expect('' + await VASYA.getTokenBalance()).equal('' + new BN(vasyaBalance).minus(qty));
             expect('' + await PETYA.getTokenBalance()).equal('' + new BN(petyaBalance).plus(qty));
-        });
-    });
-
-    describe('utils', function () {
-        this.timeout(10000);
-
-        it('should get balances for eth and snmt', async function () {
-            expect(Object.keys(VASYA.tokens).length).equal(1);
-
-            const balances = await VASYA.getCurrencyBalances();
-
-            expect(balances).to.have.all.keys('0x', Object.keys(VASYA.tokens)[0]);
-        });
-
-        it('should check smartContract on address', async function () {
-            expect(await isERC20(Object.keys(VASYA.tokens)[0], VASYA.geth)).to.be.an('object');
-            expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
         });
     });
 });

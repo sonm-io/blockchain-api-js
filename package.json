@@ -1,6 +1,6 @@
 {
   "name": "sonm-api",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,8 @@
     "bignumber.js": "git+https://github.com/frozeman/bignumber.js-nolookahead.git",
     "browserify-aes": "^1.1.1",
     "buffer": "^5.0.8",
+    "crypto-browserify": "^3.12.0",
+    "ethereumjs-util": "^5.1.2",
     "ethjs-provider-signer": "^0.1.4",
     "ethjs-signer": "^0.1.1",
     "fbjs": "^0.8.16",

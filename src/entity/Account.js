@@ -59,7 +59,7 @@ class Account {
     async getCurrencies() {
         let currencies = [{
             address: '0x',
-            symbol: 'eth',
+            symbol: 'Ether',
             name: 'Ethereum',
             decimals: '18',
         }];
@@ -68,7 +68,7 @@ class Account {
             const token = this.tokens[tokenAddress];
 
             currencies.push({
-                symbol: token.symbol.toLowerCase(),
+                symbol: token.symbol,
                 address: token.address,
                 name: token.name,
                 decimals: token.decimals,

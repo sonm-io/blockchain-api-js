@@ -1,8 +1,12 @@
 module.exports = {
-  "development": {
-    "contractAddress": {
-      "token": "0x225b929916daadd5044d5934936313001f55d8f0",
-      "votingRegistry": "0x7acce88d944519878c30245d30c3c7836f3bf2b6"
+    "development": {
+        "contractAddress": {
+            "token": "0x225b929916daadd5044d5934936313001f55d8f0",
+        },
     },
-  }
+    "production": {
+        "contractAddress": {
+            "token": "0x983F6d60db79ea8cA4eB9968C6aFf8cfA04B3c63",
+        },
+    },
 };

@@ -4,6 +4,7 @@ const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const memoize = require('./src/utils/memoization');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
+const newAccount = require('./src/utils/new-account.js');
 const TransactionResult = require('./src/TransactionResult');
 
 const { fromWei, toWei } = require('./src/utils/format-ether');
@@ -63,13 +64,18 @@ function createSonmFactory(remoteEthNodeUrl, params = {}) {
     };
 };
 
+function getSonmTokenAddress() {
+    return config[environment].contractAddress.token;
+}
 
 module.exports = {
     createSonmFactory,
     utils: {
         recoverPrivateKey,
         add0x,
+        newAccount,
         fromWei,
         toWei,
+        getSonmTokenAddress,
     },
 };
