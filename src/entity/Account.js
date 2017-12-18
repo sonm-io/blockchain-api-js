@@ -36,33 +36,29 @@ class Account {
     }
 
     async getCurrencyBalances() {
-        let requests = [
-            this.getBalance()
-        ];
-
-        for (const address in this.tokens) {
-            requests.push(this.getTokenBalance(address))
-        }
-
-        const results = await Promise.all(requests);
-
         const balances = {};
 
-        for (let index in results) {
-            const address = parseInt(index) === 0 ? '0x' : Object.keys(this.tokens)[index-1];
-            balances[address] = results[index].toString()
-        }
+        try {
+            let requests = [
+                this.getBalance()
+            ];
+
+            for (const address in this.tokens) {
+                requests.push(this.getTokenBalance(address))
+            }
+
+            const results = await Promise.all(requests);
+            for (let index in results) {
+                const address = parseInt(index) === 0 ? '0x' : Object.keys(this.tokens)[index - 1];
+                balances[address] = results[index].toString()
+            }
+        } catch(err) {}
 
         return balances;
     }
 
     async getCurrencies() {
-        let currencies = [{
-            address: '0x',
-            symbol: 'Ether',
-            name: 'Ethereum',
-            decimals: '18',
-        }];
+        let currencies = [];
 
         for (const tokenAddress in this.tokens) {
             const token = this.tokens[tokenAddress];
@@ -72,6 +68,15 @@ class Account {
                 address: token.address,
                 name: token.name,
                 decimals: token.decimals,
+            });
+        }
+
+        if (currencies.length !== 0) {
+            currencies.unshift({
+                address: '0x',
+                symbol: 'Ether',
+                name: 'Ethereum',
+                decimals: '18',
             });
         }
 
