@@ -9,9 +9,9 @@ module.exports = function(passphrase = '', opts = {})
         throw new Error('Need password');
     }
 
-    const private = new Buffer(crypto.randomBytes(32), 'hex');
-    const public = ethUtil.privateToPublic(private);
-    const address = ethUtil.publicToAddress(public).toString('hex');
+    const privateKey = new Buffer(crypto.randomBytes(32), 'hex');
+    const publicKey = ethUtil.privateToPublic(privateKey);
+    const address = ethUtil.publicToAddress(publicKey).toString('hex');
 
     const salt = crypto.randomBytes(32);
     const iv = crypto.randomBytes(16);
@@ -44,7 +44,7 @@ module.exports = function(passphrase = '', opts = {})
         throw new Error('Unsupported cipher')
     }
 
-    const ciphertext = Buffer.concat([cipher.update(private), cipher.final()]);
+    const ciphertext = Buffer.concat([cipher.update(privateKey), cipher.final()]);
     const mac = ethUtil.sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), new Buffer(ciphertext, 'hex')]));
 
     return {
