@@ -6,7 +6,7 @@ module.exports = {
     },
     "rinkeby": {
         "contractAddress": {
-            "token": "0x225b929916daadd5044d5934936313001f55d8f0",
+            "token": "0x45ccf7cfb6de9b86c86e2d6fb079b01b5c90ee2c",
         },
     },
 };

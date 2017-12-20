@@ -134,7 +134,7 @@ class Account {
         gasLimit = gasLimit || toHex(await this.getGasLimit());
         gasPrice = gasPrice || toHex(await this.getGasPrice());
 
-        const resultPromise = this.tokens[tokenAddress].contract.transfer(
+        const transaction = await this.tokens[tokenAddress].contract.transfer(
             this.normalizeTarget(to),
             qty,
             {
@@ -147,7 +147,22 @@ class Account {
 
         this.nonce++;
 
-        return new TransactionResult(resultPromise, this.geth);
+        const txResult = new TransactionResult(transaction.tx, this.geth);
+        txResult._receipt = transaction.receipt;
+
+        return txResult;
+    }
+
+    async requestTestTokens() {
+        const gasLimit = toHex(await this.getGasLimit());
+        const gasPrice = toHex(await this.getGasPrice());
+
+        const addresses = Object.keys(this.tokens);
+        return await this.tokens[addresses[0]].contract.getTokens({
+            from: this.getAddress(),
+            gasLimit,
+            gasPrice,
+        });
     }
 
     async sendEther(to, amount, gasLimit, gasPrice) {

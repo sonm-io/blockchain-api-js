@@ -45,6 +45,10 @@ before(async function () {
     vasyaGethClient.setPrivateKey(vasyaPrivateKey.toString('hex'));
     petyaGethClient.setPrivateKey(petyaPrivateKey.toString('hex'));
 
+    console.log('Request test tokens....');
+    await VASYA.requestTestTokens();
+    await PETYA.requestTestTokens();
+
     const gasPrice = await vasyaGethClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
 
@@ -129,7 +133,6 @@ describe('Profile entity', function () {
             console.log(`transaction hash ${await txResult.getHash()}`);
 
             const receipt = await txResult.getReceipt();
-            //console.log(receipt);
 
             expect('' + await VASYA.getTokenBalance()).equal('' + new BN(vasyaBalance).minus(qty));
             expect('' + await PETYA.getTokenBalance()).equal('' + new BN(petyaBalance).plus(qty));
