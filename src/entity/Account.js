@@ -119,40 +119,6 @@ class Account {
         return result;
     }
 
-    async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {
-        //get first one
-        if ( !tokenAddress ) {
-            tokenAddress = Object.keys(this.tokens)[0];
-        }
-
-        if (!this.nonce) {
-            this.nonce = await this.geth.method('getTransactionCount')(this.getAddress());
-        }
-
-        const qty = toHex(amount);
-
-        gasLimit = gasLimit || toHex(await this.getGasLimit());
-        gasPrice = gasPrice || toHex(await this.getGasPrice());
-
-        const transaction = await this.tokens[tokenAddress].contract.transfer(
-            this.normalizeTarget(to),
-            qty,
-            {
-                from: this.getAddress(),
-                gasLimit,
-                gasPrice,
-                nonce: toHex(this.nonce),
-            }
-        );
-
-        this.nonce++;
-
-        const txResult = new TransactionResult(transaction.tx, this.geth);
-        txResult._receipt = transaction.receipt;
-
-        return txResult;
-    }
-
     async requestTestTokens() {
         const gasLimit = toHex(await this.getGasLimit());
         const gasPrice = toHex(await this.getGasPrice());
@@ -165,28 +131,55 @@ class Account {
         });
     }
 
-    async sendEther(to, amount, gasLimit, gasPrice) {
+    async send(to, amount, tokenAddress, gasLimit, gasPrice) {
         if (!this.nonce) {
             this.nonce = await this.geth.method('getTransactionCount')(this.getAddress());
         }
 
+        const value = toHex(amount);
+
         gasLimit = gasLimit || toHex(await this.getGasLimit());
         gasPrice = gasPrice || toHex(await this.getGasPrice());
 
-        const value = toHex(amount);
-
-        const tx = {
-            from: this.getAddress(),
-            gasLimit,
-            gasPrice,
-            value,
-            to: this.normalizeTarget(to),
-            nonce: toHex(this.nonce),
-        };
+        let tx = {};
+        if (tokenAddress === '0x') {
+            tx = {
+                from: this.getAddress(),
+                gasLimit,
+                gasPrice,
+                value,
+                to: this.normalizeTarget(to),
+                nonce: toHex(this.nonce),
+            };
+        } else {
+            const request = await this.tokens[tokenAddress].contract.transfer.request(this.normalizeTarget(to), value);
+            tx = {
+                from: this.getAddress(),
+                gasLimit,
+                gasPrice,
+                value: 0,
+                to: tokenAddress,
+                nonce: toHex(this.nonce),
+                data: request.params[0].data,
+            };
+        }
 
         this.nonce++;
 
         return this.geth.sendTransaction(tx);
+    }
+
+    async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {
+        //get first one
+        if ( !tokenAddress ) {
+            tokenAddress = Object.keys(this.tokens)[0];
+        }
+
+        return await this.send(to, amount, tokenAddress, gasLimit, gasPrice);
+    }
+
+    async sendEther(to, amount, gasLimit, gasPrice) {
+        return await this.send(to, amount, '0x', gasLimit, gasPrice);
     }
 
     normalizeTarget(to) {
