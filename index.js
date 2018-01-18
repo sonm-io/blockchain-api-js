@@ -1,5 +1,6 @@
 const providerFactory = require('./src/provider/provider-factory');
 const Account = require('./src/entity/Account');
+const TokenList = require('./src/entity/TokenList');
 const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const memoize = require('./src/utils/memoization');
@@ -42,7 +43,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
 
         const account = new Account(ctrArguments);
 
-        await account.addToken(chainConfig.contractAddress.token);
+        await account.initSonmToken(chainConfig.contractAddress.token);
 
         return account;
     }
@@ -60,12 +61,24 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
         return chainConfig.contractAddress.token;
     }
 
+    async function createTokenList() {
+        const tokenList = new TokenList({
+            gethClient,
+            sonmTokenAddress: chainConfig.contractAddress.token,
+        });
+
+        await tokenList.add(chainConfig.contractAddress.token);
+
+        return tokenList;
+    }
+
     return {
         gethClient,
         createAccount,
         createTxResult,
         setPrivateKey,
         getSonmTokenAddress,
+        createTokenList,
     };
 };
 

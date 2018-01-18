@@ -8,7 +8,7 @@ const crypto = require('crypto-browserify');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
-let VASYA, PETYA;
+let VASYA, PETYA, TokenList, sonmTokenAddress;
 
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const petyaCfg = require('./data/Petya_qazwsxedc.json');
@@ -25,8 +25,8 @@ before(async function () {
 
     const { createSonmFactory } = sonmApi;
 
-    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby', {limitGasPrice: new BN('30000000000')});
-    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby', {limitGasPrice: new BN('30000000000')});
+    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
+    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
 
     console.log('Creating test accounts...');
     VASYA = await vasyaGethClient.createAccount(vasyaCfg.address);
@@ -52,8 +52,12 @@ before(async function () {
     const gasPrice = await vasyaGethClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice.toFormat());
 
-    const sonmTokenAddress = vasyaGethClient.getSonmTokenAddress();
+    sonmTokenAddress = vasyaGethClient.getSonmTokenAddress();
     console.log('Sonm token address: ', sonmTokenAddress);
+
+    console.log('Init token lists...');
+    TokenList = await vasyaGethClient.createTokenList();
+    console.log('done');
 });
 
 describe('Profile entity', function () {
@@ -61,15 +65,15 @@ describe('Profile entity', function () {
         this.timeout(10000);
 
         it('should get balances for eth and snmt', async function () {
-            expect(Object.keys(VASYA.tokens).length).equal(1);
+            expect(TokenList.getList().length).equal(2);
 
-            const balances = await VASYA.getCurrencyBalances();
+            const balances = await TokenList.getBalances(VASYA.getAddress());
 
-            expect(balances).to.have.all.keys('0x', Object.keys(VASYA.tokens)[0]);
+            expect(balances).to.have.all.keys('0x', sonmTokenAddress);
         });
 
         it('should check smartContract on address', async function () {
-            expect(await isERC20(Object.keys(VASYA.tokens)[0], VASYA.geth)).to.be.an('object');
+            expect(await isERC20(sonmTokenAddress, VASYA.geth)).to.be.an('object');
             expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
         });
 
@@ -95,7 +99,7 @@ describe('Profile entity', function () {
 
             console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
 
-            const txResult = await VASYA.sendEther(PETYA, qty, 500000);
+            const txResult = await VASYA.sendEther(PETYA, qty, 1000000, 100000000000);
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
@@ -119,23 +123,24 @@ describe('Profile entity', function () {
         it('should send sonm tokens from VASYA to PETYA', async function () {
             this.timeout(+Infinity);
 
+            const sonmToken = TokenList.tokens[sonmTokenAddress];
             const qty = 2;
 
             const [vasyaBalance, petyaBalance] = await Promise.all([
-                VASYA.getTokenBalance(),
-                PETYA.getTokenBalance(),
+                sonmToken.getBalance(VASYA.getAddress()),
+                sonmToken.getBalance(PETYA.getAddress()),
             ]);
 
             console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
 
-            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, null, 500001);
+            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, sonmTokenAddress, 1000001, 100000000000);
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
             const receipt = await txResult.getReceipt();
 
-            expect('' + await VASYA.getTokenBalance()).equal('' + new BN(vasyaBalance).minus(qty));
-            expect('' + await PETYA.getTokenBalance()).equal('' + new BN(petyaBalance).plus(qty));
+            expect('' + await sonmToken.getBalance(VASYA.getAddress())).equal('' + new BN(vasyaBalance).minus(qty));
+            expect('' + await sonmToken.getBalance(PETYA.getAddress())).equal('' + new BN(petyaBalance).plus(qty));
         });
     });
 });

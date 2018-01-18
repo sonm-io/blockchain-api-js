@@ -23,78 +23,22 @@ class Account {
         this.address = address0x;
         this.tokens = {};
         this.nonce = 0;
+
+        this.sonmTokenContract = null;
     }
 
-    async addToken(address) {
-        const contract = await isERC20(address, this.geth);
+    async initSonmToken(address) {
+        const check = await isERC20(address, this.geth);
 
-        if (contract) {
-            this.tokens[address] = contract;
+        if (check) {
+            this.sonmTokenContract = check.contract;
         } else {
             return false;
         }
     }
 
-    async getCurrencyBalances() {
-        const balances = {};
-
-        try {
-            let requests = [
-                this.getBalance()
-            ];
-
-            for (const address in this.tokens) {
-                requests.push(this.getTokenBalance(address))
-            }
-
-            const results = await Promise.all(requests);
-            for (let index in results) {
-                const address = parseInt(index) === 0 ? '0x' : Object.keys(this.tokens)[index - 1];
-                balances[address] = results[index].toString()
-            }
-        } catch(err) {}
-
-        return balances;
-    }
-
-    async getCurrencies() {
-        let currencies = [];
-
-        for (const tokenAddress in this.tokens) {
-            const token = this.tokens[tokenAddress];
-
-            currencies.push({
-                symbol: token.symbol,
-                address: token.address,
-                name: token.name,
-                decimals: token.decimals,
-            });
-        }
-
-        if (currencies.length !== 0) {
-            currencies.unshift({
-                address: '0x',
-                symbol: 'Ether',
-                name: 'Ethereum',
-                decimals: '18',
-            });
-        }
-
-        return currencies;
-    }
-
     async getBalance() {
         const result = await this.geth.method('getBalance')(this.getAddress());
-        return result.toString();
-    }
-
-    async getTokenBalance(tokenAddress) {
-        //get first one
-        if ( !tokenAddress ) {
-            tokenAddress = Object.keys(this.tokens)[0];
-        }
-
-        const result = await this.tokens[tokenAddress].contract.balanceOf(this.address);
         return result.toString();
     }
 
@@ -124,7 +68,7 @@ class Account {
         const gasPrice = toHex(await this.getGasPrice());
 
         const addresses = Object.keys(this.tokens);
-        return await this.tokens[addresses[0]].contract.getTokens({
+        return await this.sonmTokenContract.getTokens({
             from: this.getAddress(),
             gasLimit,
             gasPrice,
@@ -152,7 +96,7 @@ class Account {
                 nonce: toHex(this.nonce),
             };
         } else {
-            const request = await this.tokens[tokenAddress].contract.transfer.request(this.normalizeTarget(to), value);
+            const request = await this.sonmTokenContract.transfer.request(this.normalizeTarget(to), value);
             tx = {
                 from: this.getAddress(),
                 gasLimit,
