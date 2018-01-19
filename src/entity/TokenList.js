@@ -30,23 +30,27 @@ class TokenList {
     }
 
     async add(address) {
-        if ( this.tokens[address] ) {
-            return this.tokens[address];
-        } else {
-            const token = new Token({gethClient: this.geth});
-            const tokenInfo = await token.init(address);
-
-            if (tokenInfo) {
-                this.tokens[tokenInfo.address] = token;
-
-                const info = token.getInfo();
-
-                this.list.push(info);
-
-                return info;
+        if(address !== '0x') {
+            if (this.tokens[address]) {
+                return this.tokens[address];
             } else {
-                return false;
+                const token = new Token({gethClient: this.geth});
+                const tokenInfo = await token.init(address);
+
+                if (tokenInfo) {
+                    this.tokens[tokenInfo.address] = token;
+
+                    const info = token.getInfo();
+
+                    this.list.push(info);
+
+                    return info;
+                } else {
+                    return false;
+                }
             }
+        } else {
+            return false;
         }
     }
 
