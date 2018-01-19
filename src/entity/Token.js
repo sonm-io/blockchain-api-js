@@ -29,6 +29,15 @@ class Token {
     getAddress() {
         return this.data.address;
     }
+
+    getInfo() {
+        return {
+            address: this.data.address,
+            symbol: this.data.symbol,
+            name: this.data.name,
+            decimals: this.data.decimals,
+        }
+    }
 }
 
 module.exports = Token;

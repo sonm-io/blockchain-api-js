@@ -18,30 +18,35 @@ class TokenList {
         }];
 
         this.tokens = {};
+        this.contracts = {};
     }
 
     getList() {
         return this.list;
     }
 
+    getToken(address) {
+        return this.tokens[address];
+    }
+
     async add(address) {
-        const token = new Token({gethClient: this.geth});
-        const tokenInfo = await token.init(address);
-
-        if (tokenInfo) {
-            const data = {
-                address: tokenInfo.address,
-                symbol: tokenInfo.symbol,
-                name: tokenInfo.name,
-                decimals: tokenInfo.decimals,
-            };
-
-            this.list.push(data);
-            this.tokens[tokenInfo.address] = token;
-
-            return data;
+        if ( this.tokens[address] ) {
+            return this.tokens[address];
         } else {
-            return false;
+            const token = new Token({gethClient: this.geth});
+            const tokenInfo = await token.init(address);
+
+            if (tokenInfo) {
+                this.tokens[tokenInfo.address] = token;
+
+                const info = token.getInfo();
+
+                this.list.push(info);
+
+                return info;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -54,13 +59,14 @@ class TokenList {
             ];
 
             for (const tokenAddress in this.tokens) {
-                requests.push(this.tokens[tokenAddress].getBalance(address))
+                requests.push(this.tokens[tokenAddress].getBalance(address));
             }
 
             const results = await Promise.all(requests);
+            const addresses = Object.keys(this.tokens);
 
-            for (let index in results) {
-                balances[this.list[index].address] = results[index].toString()
+            for (const index in results) {
+                balances[parseInt(index) === 0 ? '0x' : addresses[index-1]] = results[index].toString()
             }
         } catch(err) {
             console.log(err.stack);

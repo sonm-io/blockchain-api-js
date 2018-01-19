@@ -123,7 +123,7 @@ describe('Profile entity', function () {
         it('should send sonm tokens from VASYA to PETYA', async function () {
             this.timeout(+Infinity);
 
-            const sonmToken = TokenList.tokens[sonmTokenAddress];
+            const sonmToken = TokenList.getToken(sonmTokenAddress);
             const qty = 2;
 
             const [vasyaBalance, petyaBalance] = await Promise.all([
