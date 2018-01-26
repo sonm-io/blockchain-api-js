@@ -1,5 +1,4 @@
 const invariant = require('fbjs/lib/invariant');
-const fetch = require('node-fetch');
 const fromHex = require('./utils/from-hex');
 const Buffer = require('buffer').Buffer;
 const EthereumTx = require('ethereumjs-tx');
@@ -27,7 +26,7 @@ module.exports = class EthClient {
         //     return sign(rawTx, _privateKey, false)
         // };
 
-        const response = await fetch(this.url, {
+        const response = await window.fetch(this.url, {
             timeout: this.timeout,
             method: 'POST',
             body: JSON.stringify(body),
