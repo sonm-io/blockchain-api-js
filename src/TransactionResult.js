@@ -4,8 +4,8 @@ const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
-    constructor(src, gethClient, txParams = null) {
-        this._geth = gethClient;
+    constructor(src, ethClient, txParams = null) {
+        this._eth = ethClient;
         this._receipt = null;
         this._hash = null;
         this._promise = null;
@@ -60,7 +60,7 @@ class TxResult {
 
     async getTransaction() {
         if (this._txParams === null) {
-            this._txParams = await this._geth.method('getTransaction')(await this.getHash());
+            this._txParams = await this._eth.getTransaction(await this.getHash());
             this.validateTxParams(this._txParams);
         }
 
@@ -86,7 +86,7 @@ class TxResult {
     async getConfirmationsCount() {
         const [receipt, currentBlockNumber] = await Promise.all([
             this.getReceipt(),
-            this._geth.method('getBlockNumber')(),
+            this._eth.getBlockNumber(),
         ]);
 
         return (currentBlockNumber > receipt.blockNumber) ? currentBlockNumber - receipt.blockNumber : 0;
@@ -103,7 +103,7 @@ class TxResult {
                 const timeoutTask = setTimeout(() => reject(`getReceipt timeout: ${MAX_TIMEOUT}`), MAX_TIMEOUT);
 
                 const check = async () => {
-                    const result = await this._geth.method('getTransactionReceipt')(hash);
+                    const result = await this._eth.getTransactionReceipt(hash);
 
                     if (result) {
                         clearTimeout(timeoutTask);

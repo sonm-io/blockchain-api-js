@@ -37,9 +37,9 @@ module.exports = function (json, password) {
     //let privateKey = Buffer.concat([decipher.update(ciphertext), decipher.final()])
     let privateKey = Buffer.concat([Buffer.from(decipher.update(ciphertext)), Buffer.from(decipher.final())])
 
-    while (privateKey.length < 32) {
-        privateKey = Buffer.concat([new Buffer([0x00]), privateKey]);
-    }
+    // while (privateKey.length < 32) {
+    //     privateKey = Buffer.concat([new Buffer([0x00]), privateKey]);
+    // }
 
     return privateKey.toString('hex');
 };

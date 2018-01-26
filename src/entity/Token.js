@@ -4,25 +4,25 @@ const invariant = require('fbjs/lib/invariant');
 const isERC20 = require('../utils/check-token');
 
 class Token {
-    constructor({gethClient}) {
-        invariant(gethClient, 'gethClient is not defined');
+    constructor({ethClient}) {
+        invariant(ethClient, 'gethClient is not defined');
 
-        this.geth = gethClient;
+        this.ethClient = ethClient;
         this.data = null;
     }
 
     async init(address) {
-        this.data = await isERC20(address, this.geth);
+        this.data = await isERC20(address, this.ethClient);
         return this.data;
     }
 
     async getBalance(address) {
-        const result = await this.data.contract.balanceOf(address);
-        return result.toString();
+        const result = await this.data.contract.call('balanceOf', [address]);
+        return result[0].toString();
     }
 
-    async transferRawTransaction(to, value) {
-        const raw = await this.data.contract.transfer.request(to, value);
+    async transfer(to, value) {
+        const raw = await this.data.contract.call('transfer', [to, value]);
         return raw.params[0].data;
     }
 

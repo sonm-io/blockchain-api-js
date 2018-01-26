@@ -5,6 +5,7 @@ const getPrivateKey = require('../src/utils/recover-private-key');
 const newAccount = require('../src/utils/new-account');
 const isERC20 = require('../src/utils/check-token');
 const crypto = require('crypto-browserify');
+const { fromWei, toWei, toBigNumber } = require('../src/utils/format-ether');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
@@ -25,12 +26,12 @@ before(async function () {
 
     const { createSonmFactory } = sonmApi;
 
-    const vasyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
-    const petyaGethClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
+    const vasyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
+    const petyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
 
     console.log('Creating test accounts...');
-    VASYA = await vasyaGethClient.createAccount(vasyaCfg.address);
-    PETYA = await petyaGethClient.createAccount(petyaCfg.address);
+    VASYA = await vasyaClient.createAccount(vasyaCfg.address);
+    PETYA = await petyaClient.createAccount(petyaCfg.address);
     console.log('done');
 
     console.log('Get balances without privateKeys...');
@@ -42,27 +43,31 @@ before(async function () {
     console.log(`Ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
 
     console.log('Set private keys....');
-    vasyaGethClient.setPrivateKey(vasyaPrivateKey.toString('hex'));
-    petyaGethClient.setPrivateKey(petyaPrivateKey.toString('hex'));
+    vasyaClient.setPrivateKey(vasyaPrivateKey);
+    petyaClient.setPrivateKey(petyaPrivateKey);
 
-    // console.log('Request test tokens....');
-    // await VASYA.requestTestTokens();
-    // await PETYA.requestTestTokens();
+    // // console.log('Request test tokens....');
+    // // await VASYA.requestTestTokens();
+    // // await PETYA.requestTestTokens();
 
-    const gasPrice = await vasyaGethClient.gethClient.getGasPrice();
-    console.log('Gas price: ', gasPrice.toFormat());
+    const gasPrice = await vasyaClient.ethClient.getGasPrice();
+    console.log('Gas price: ', gasPrice);
 
-    sonmTokenAddress = vasyaGethClient.getSonmTokenAddress();
+    sonmTokenAddress = vasyaClient.getSonmTokenAddress();
     console.log('Sonm token address: ', sonmTokenAddress);
 
     console.log('Init token lists...');
-    TokenList = await vasyaGethClient.createTokenList();
+    TokenList = await vasyaClient.createTokenList();
     console.log('done');
 });
 
 describe('Profile entity', function () {
+
+    //6764108015160604968
+    //6.760490415160604968
+
     describe('utils', function () {
-        this.timeout(10000);
+        this.timeout(30000);
 
         it('should get balances for eth and snmt', async function () {
             expect(TokenList.getList().length).equal(2);
@@ -73,8 +78,8 @@ describe('Profile entity', function () {
         });
 
         it('should check smartContract on address', async function () {
-            expect(await isERC20(sonmTokenAddress, VASYA.geth)).to.be.an('object');
-            expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
+            expect(await isERC20(sonmTokenAddress, VASYA.ethClient)).to.be.an('object');
+            expect(await isERC20(VASYA.getAddress(), VASYA.ethClient)).equal(false);
         });
 
         it('should generate new account and recover private key from it', async function () {
@@ -83,6 +88,14 @@ describe('Profile entity', function () {
             const privateKey = getPrivateKey(json, password);
 
             expect(privateKey).to.be.an('string');
+        });
+
+        it('should format ether', async function () {
+            const wei = '6760490415160604968';
+            const ether = '6.760490415160604968';
+
+            expect(toWei(ether, 'ether')).equal(wei);
+            expect(fromWei(wei, 'ether')).equal(ether);
         });
     });
 
@@ -100,11 +113,9 @@ describe('Profile entity', function () {
             console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
 
             const txResult = await VASYA.sendEther(PETYA, qty, 1000000, 100000000000);
-
             console.log(`transaction hash ${await txResult.getHash()}`);
 
-            //const receipt = await txResult.getReceipt();
-
+            const receipt = await txResult.getReceipt();
             console.log('confirmations', await txResult.getConfirmationsCount());
 
             const txPrice = await txResult.getTxPrice();
@@ -113,6 +124,7 @@ describe('Profile entity', function () {
                 VASYA.getBalance(),
                 PETYA.getBalance(),
             ]);
+
 
             expect('' + newVasyaBalance).equal('' + new BN(vasyaBalance).minus(qty).minus(txPrice));
             expect('' + newPetyaBalance).equal('' + new BN(petyaBalance).plus(qty));

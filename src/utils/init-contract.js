@@ -1,21 +1,17 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const contract = require('truffle-contract');
+const Contract = require('../entity/Contract.js');
 
-const contractToken = require('../../contracts/SNMT.json');
-
-//init contracts
 const contracts = {
-    token: contractToken,
+    token: require('../../contracts/SNMT.json'),
 };
 
-module.exports = async function (name, gethClient) {
-    invariant(gethClient, 'gethClient is not defined');
+module.exports = async function (name, ethClient, address) {
+    invariant(ethClient, 'ethClient is not defined');
     invariant(name, 'set current contract name');
+    invariant(address, 'address is not defined');
+    invariant(address.startsWith('0x'), 'address should starts with 0x');
 
-    const contractObject = contract(contracts[name]);
-    contractObject.setProvider(gethClient.provider);
-
-    return contractObject;
+    return new Contract(contracts[name], address, ethClient);
 };

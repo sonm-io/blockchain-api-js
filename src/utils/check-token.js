@@ -1,21 +1,23 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
+const Contract = require('../entity/Contract.js');
+const json = require('../../contracts/SNMT.json');
+
 const initContract = require('./init-contract');
 
-module.exports = async function isERC20(address, gethClient) {
+module.exports = async function isERC20(address, ethClient) {
     invariant(address, 'address is not defined');
     invariant(address.startsWith('0x'), 'address should starts with 0x');
-    invariant(gethClient, 'gethClient is not defined');
+    invariant(ethClient, 'gethClient is not defined');
 
-    if (await gethClient.method('getCode')(address) !== '0x') {
-        const contractObject = await initContract('token', gethClient);
-        const contract = await contractObject.at(address);
+    if (await ethClient.getCode(address) !== '0x') {
+        const contract = await initContract('token', ethClient, address);
 
         const [name, symbol, decimals] = await Promise.all([
-            contract.name(),
-            contract.symbol(),
-            contract.decimals()
+            contract.call('name'),
+            contract.call('symbol'),
+            contract.call('decimals'),
         ]);
 
         return {

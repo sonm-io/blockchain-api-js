@@ -4,11 +4,11 @@ const invariant = require('fbjs/lib/invariant');
 const Token = require('./Token');
 
 class TokenList {
-    constructor({gethClient, sonmTokenAddress}) {
-        invariant(gethClient, 'gethClient is not defined');
+    constructor({ethClient, sonmTokenAddress}) {
+        invariant(ethClient, 'gethClient is not defined');
         invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
 
-        this.geth = gethClient;
+        this.ethClient = ethClient;
 
         this.list = [{
             address: '0x',
@@ -34,7 +34,7 @@ class TokenList {
             if (this.tokens[address]) {
                 return this.tokens[address];
             } else {
-                const token = new Token({gethClient: this.geth});
+                const token = new Token({ethClient: this.ethClient});
                 const tokenInfo = await token.init(address);
 
                 if (tokenInfo) {
@@ -59,7 +59,7 @@ class TokenList {
 
         try {
             let requests = [
-                this.geth.method('getBalance')(address)
+                this.ethClient.getBalance(address)
             ];
 
             for (const tokenAddress in this.tokens) {
