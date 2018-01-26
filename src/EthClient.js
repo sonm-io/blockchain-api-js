@@ -26,7 +26,7 @@ module.exports = class EthClient {
         //     return sign(rawTx, _privateKey, false)
         // };
 
-        const response = await window.fetch(this.url, {
+        const response = await fetch(this.url, {
             timeout: this.timeout,
             method: 'POST',
             body: JSON.stringify(body),
