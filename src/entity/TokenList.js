@@ -54,6 +54,17 @@ class TokenList {
         }
     }
 
+    async getTokenInfo(address) {
+        const token = new Token({gethClient: this.gethClient});
+        const tokenInfo = await token.init(address);
+
+        if (tokenInfo) {
+            return token.getInfo();
+        } else {
+            return false;
+        }
+    }
+
     async getBalances(address) {
         const balances = {};
 
