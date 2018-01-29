@@ -4,7 +4,7 @@ const Buffer = require('buffer').Buffer;
 const EthereumTx = require('ethereumjs-tx');
 const TransactionResult = require('./TransactionResult');
 
-module.exports = class EthClient {
+module.exports = class GethClient {
     constructor(url, timeout = 30000) {
         invariant(url, 'url is not defined');
 
