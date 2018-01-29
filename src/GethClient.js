@@ -22,10 +22,6 @@ module.exports = class EthClient {
             id: this.requestCounter++
         };
 
-        // const signTransaction = (rawTx, cb) => {
-        //     return sign(rawTx, _privateKey, false)
-        // };
-
         const response = await fetch(this.url, {
             timeout: this.timeout,
             method: 'POST',

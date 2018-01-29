@@ -6,13 +6,13 @@ const json = require('../../contracts/SNMT.json');
 
 const initContract = require('./init-contract');
 
-module.exports = async function isERC20(address, ethClient) {
+module.exports = async function isERC20(address, gethClient) {
     invariant(address, 'address is not defined');
     invariant(address.startsWith('0x'), 'address should starts with 0x');
-    invariant(ethClient, 'gethClient is not defined');
+    invariant(gethClient, 'gethClient is not defined');
 
-    if (await ethClient.getCode(address) !== '0x') {
-        const contract = await initContract('token', ethClient, address);
+    if (await gethClient.getCode(address) !== '0x') {
+        const contract = await initContract('token', gethClient, address);
 
         const [name, symbol, decimals] = await Promise.all([
             contract.call('name'),

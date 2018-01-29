@@ -50,7 +50,7 @@ before(async function () {
     // // await VASYA.requestTestTokens();
     // // await PETYA.requestTestTokens();
 
-    const gasPrice = await vasyaClient.ethClient.getGasPrice();
+    const gasPrice = await vasyaClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice);
 
     sonmTokenAddress = vasyaClient.getSonmTokenAddress();
@@ -62,10 +62,6 @@ before(async function () {
 });
 
 describe('Profile entity', function () {
-
-    //6764108015160604968
-    //6.760490415160604968
-
     describe('utils', function () {
         this.timeout(30000);
 
@@ -78,8 +74,8 @@ describe('Profile entity', function () {
         });
 
         it('should check smartContract on address', async function () {
-            expect(await isERC20(sonmTokenAddress, VASYA.ethClient)).to.be.an('object');
-            expect(await isERC20(VASYA.getAddress(), VASYA.ethClient)).equal(false);
+            expect(await isERC20(sonmTokenAddress, VASYA.gethClient)).to.be.an('object');
+            expect(await isERC20(VASYA.getAddress(), VASYA.gethClient)).equal(false);
         });
 
         it('should generate new account and recover private key from it', async function () {

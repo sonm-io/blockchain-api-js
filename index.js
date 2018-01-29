@@ -1,7 +1,7 @@
 const Account = require('./src/entity/Account');
 const TokenList = require('./src/entity/TokenList');
 const add0x = require('./src/utils/add-0x');
-const EthClient = require('./src/EthClient');
+const GethClient = require('./src/GethClient');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 const newAccount = require('./src/utils/new-account.js');
 const TransactionResult = require('./src/TransactionResult');
@@ -10,7 +10,7 @@ const { fromWei, toWei, toBigNumber } = require('./src/utils/format-ether');
 const config = require('./config');
 
 function createSonmFactory(remoteEthNodeUrl, chainId = 'live') {
-    const ethClient = new EthClient(remoteEthNodeUrl);
+    const gethClient = new GethClient(remoteEthNodeUrl);
     const chainConfig = config[chainId];
 
     async function createAccount(address) {
@@ -18,7 +18,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live') {
 
         const account = new Account({
             address0x,
-            ethClient,
+            gethClient,
         });
 
         await account.initSonmToken(chainConfig.contractAddress.token);
@@ -31,7 +31,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live') {
     }
 
     function setPrivateKey(privateKey) {
-        ethClient.setPrivateKey(privateKey);
+        gethClient.setPrivateKey(privateKey);
     }
 
     function getSonmTokenAddress() {
@@ -40,7 +40,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live') {
 
     async function createTokenList() {
         const tokenList = new TokenList({
-            ethClient,
+            gethClient,
             sonmTokenAddress: chainConfig.contractAddress.token,
         });
 
@@ -50,7 +50,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live') {
     }
 
     return {
-        ethClient,
+        gethClient,
         createAccount,
         createTxResult,
         setPrivateKey,

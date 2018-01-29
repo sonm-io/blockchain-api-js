@@ -7,11 +7,11 @@ const contracts = {
     token: require('../../contracts/SNMT.json'),
 };
 
-module.exports = async function (name, ethClient, address) {
-    invariant(ethClient, 'ethClient is not defined');
+module.exports = async function (name, gethClient, address) {
+    invariant(gethClient, 'gethClient is not defined');
     invariant(name, 'set current contract name');
     invariant(address, 'address is not defined');
     invariant(address.startsWith('0x'), 'address should starts with 0x');
 
-    return new Contract(contracts[name], address, ethClient);
+    return new Contract(contracts[name], address, gethClient);
 };

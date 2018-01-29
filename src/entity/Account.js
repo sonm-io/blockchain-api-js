@@ -11,15 +11,15 @@ const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Account {
-    constructor({ethClient, address0x, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
+    constructor({gethClient, address0x, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
 
-        invariant(ethClient, 'ethClient is not defined');
+        invariant(gethClient, 'gethClient is not defined');
         invariant(address0x, 'address is not defined');
         invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
         this.throwGasPriceError = throwGasPriceError;
         this.limitGasPrice = new BN(limitGasPrice);
-        this.ethClient = ethClient;
+        this.gethClient = gethClient;
         this.address = address0x;
         this.tokens = {};
         this.nonce = 0;
@@ -28,7 +28,7 @@ class Account {
     }
 
     async initSonmToken(address) {
-        const check = await isERC20(address, this.ethClient);
+        const check = await isERC20(address, this.gethClient);
 
         if (check) {
             this.sonmTokenContract = check.contract;
@@ -38,11 +38,11 @@ class Account {
     }
 
     setPrivateKey(privateKey) {
-        this.ethClient.setPrivateKey(privateKey);
+        this.gethClient.setPrivateKey(privateKey);
     }
 
     async getBalance() {
-        const result = await this.ethClient.getBalance(this.getAddress());
+        const result = await this.gethClient.getBalance(this.getAddress());
         return result.toString();
     }
 
@@ -55,7 +55,7 @@ class Account {
     }
 
     async getGasPrice() {
-        let result = await this.ethClient.getGasPrice();
+        let result = await this.gethClient.getGasPrice();
 
         if (result.gt(this.limitGasPrice)) {
             if (this.throwGasPriceError) {
@@ -81,13 +81,13 @@ class Account {
 
     async send(to, amount, tokenAddress, gasLimit, gasPrice) {
         if (!this.nonce) {
-            this.nonce = await this.ethClient.getTransactionCount(this.getAddress());
+            this.nonce = await this.gethClient.getTransactionCount(this.getAddress());
         }
 
         const value = toHex(amount);
 
-        gasLimit = gasLimit || toHex(await this.getGasLimit());
-        gasPrice = gasPrice || toHex(await this.getGasPrice());
+        gasLimit = toHex(gasLimit || (await this.getGasLimit()));
+        gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
         let tx = {};
         if (tokenAddress === '0x') {
@@ -115,7 +115,7 @@ class Account {
 
         this.nonce++;
 
-        return this.ethClient.sendTransaction(tx);
+        return this.gethClient.sendTransaction(tx);
     }
 
     async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {

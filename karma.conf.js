@@ -8,10 +8,6 @@ module.exports = function(config) {
       'src/**/*.js': [ 'browserify' ],
     },
 
-    browserify: {
-      debug: true,
-    },
-
     browsers: ['Chrome'], // You may use 'ChromeCanary', 'Chromium' or any other supported browser
     singleRun: true,
     files: [

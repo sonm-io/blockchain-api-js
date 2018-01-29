@@ -4,13 +4,13 @@ const abi = require('ethjs-abi');
 const invariant = require('fbjs/lib/invariant');
 
 class Contract {
-    constructor(json, address0x, client) {
+    constructor(json, address0x, gethClient) {
         invariant(json, 'abi is not defined');
-        invariant(client, 'client is not defined');
+        invariant(gethClient, 'gethClient is not defined');
         invariant(address0x, 'address is not defined');
         invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
-        this.client = client;
+        this.gethClient = gethClient;
         this.address = address0x;
         this.abi = {};
 
@@ -26,7 +26,7 @@ class Contract {
             from,
         }, 'latest' ];
 
-        const response = await this.client.call('eth_call', requestParams);
+        const response = await this.gethClient.call('eth_call', requestParams);
         const encoded = Object.values(abi.decodeMethod(this.abi[method], response));
 
         return encoded.length === 1 ? encoded[0] : encoded;
