@@ -8,7 +8,7 @@ class TokenList {
         invariant(gethClient, 'gethClient is not defined');
         invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
 
-        this.geth = gethClient;
+        this.gethClient = gethClient;
 
         this.list = [{
             address: '0x',
@@ -34,7 +34,7 @@ class TokenList {
             if (this.tokens[address]) {
                 return this.tokens[address];
             } else {
-                const token = new Token({gethClient: this.geth});
+                const token = new Token({gethClient: this.gethClient});
                 const tokenInfo = await token.init(address);
 
                 if (tokenInfo) {
@@ -55,7 +55,7 @@ class TokenList {
     }
 
     async getTokenInfo(address) {
-        const token = new Token({gethClient: this.geth});
+        const token = new Token({gethClient: this.gethClient});
         const tokenInfo = await token.init(address);
 
         if (tokenInfo) {
@@ -70,7 +70,7 @@ class TokenList {
 
         try {
             let requests = [
-                this.geth.method('getBalance')(address)
+                this.gethClient.getBalance(address)
             ];
 
             for (const tokenAddress in this.tokens) {
