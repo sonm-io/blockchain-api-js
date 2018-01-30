@@ -64,8 +64,6 @@ class TokenList {
                     return false;
                 }
             }
-        } else {
-            throw new Error('address_not_valid');
         }
     }
 
