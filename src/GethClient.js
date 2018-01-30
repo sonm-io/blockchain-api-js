@@ -81,6 +81,10 @@ module.exports = class GethClient {
         return new TransactionResult(hash, this, tx);
     }
 
+    async getNetVersion() {
+        return await this.call('net_version');
+    }
+
     setPrivateKey(privateKey) {
         this.privateKey = privateKey;
     }
