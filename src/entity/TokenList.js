@@ -67,6 +67,13 @@ class TokenList {
         }
     }
 
+    async remove(address) {
+        if (this.tokens[address]) {
+            delete this.tokens[address];
+            this.list = this.list.filter(item => item.address !== address);
+        }
+    }
+
     async getTokenInfo(address) {
         try {
             const token = new Token({gethClient: this.geth});

@@ -82,6 +82,16 @@ describe('Profile entity', function () {
             }
         });
 
+        it('should add and remove Token', async function () {
+            const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
+
+            await TokenList.add(tokenAddress);
+            expect(TokenList.getList().length).equal(3);
+
+            await TokenList.remove(tokenAddress);
+            expect(TokenList.getList().length).equal(2);
+        });
+
         it('should generate new account and recover private key from it', async function () {
             const password = new Buffer(crypto.randomBytes(10), 'hex');
             const json = newAccount(password);
