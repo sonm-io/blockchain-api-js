@@ -74,7 +74,12 @@ describe('Profile entity', function () {
 
         it('should check smartContract on address', async function () {
             expect(await isERC20(sonmTokenAddress, VASYA.geth)).to.be.an('object');
-            expect(await isERC20(VASYA.getAddress(), VASYA.geth)).equal(false);
+
+            try {
+                await isERC20(VASYA.getAddress(), VASYA.geth);
+            } catch (err) {
+                expect(err).to.be.an('error');
+            }
         });
 
         it('should generate new account and recover private key from it', async function () {

@@ -34,6 +34,21 @@ class TokenList {
             if (this.tokens[address]) {
                 return this.tokens[address];
             } else {
+                try {
+                    const token = new Token({gethClient: this.geth});
+                    const tokenInfo = await token.init(address);
+
+                    this.tokens[tokenInfo.address] = token;
+
+                    const info = token.getInfo();
+
+                    this.list.push(info);
+
+                    return info;
+                } catch (err) {
+                    throw err;
+                }
+
                 const token = new Token({gethClient: this.geth});
                 const tokenInfo = await token.init(address);
 
@@ -50,18 +65,18 @@ class TokenList {
                 }
             }
         } else {
-            return false;
+            throw new Error('address_not_valid');
         }
     }
 
     async getTokenInfo(address) {
-        const token = new Token({gethClient: this.geth});
-        const tokenInfo = await token.init(address);
+        try {
+            const token = new Token({gethClient: this.geth});
+            const tokenInfo = await token.init(address);
 
-        if (tokenInfo) {
             return token.getInfo();
-        } else {
-            return false;
+        } catch (err) {
+            throw err;
         }
     }
 
