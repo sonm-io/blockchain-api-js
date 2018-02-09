@@ -80,6 +80,12 @@ class Account {
     }
 
     async send(to, amount, tokenAddress, gasLimit, gasPrice) {
+        const tx = await this.generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice);
+
+        return this.gethClient.sendTransaction(tx);
+    }
+
+    async generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice) {
         if (!this.nonce) {
             this.nonce = await this.gethClient.getTransactionCount(this.getAddress());
         }
@@ -115,7 +121,12 @@ class Account {
 
         this.nonce++;
 
-        return this.gethClient.sendTransaction(tx);
+        return tx;
+    }
+
+    async getRawTransaction(to, amount, tokenAddress, gasLimit, gasPrice) {
+        const tx = await this.generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice);
+        return this.gethClient.getRawTransaction(tx);
     }
 
     async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {

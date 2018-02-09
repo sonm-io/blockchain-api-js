@@ -73,12 +73,16 @@ module.exports = class GethClient {
     }
 
     async sendTransaction(tx) {
+        const hash = await this.call('eth_sendRawTransaction', [this.getRawTransaction(tx)]);
+        return new TransactionResult(hash, this, tx);
+    }
+
+    getRawTransaction(tx) {
         const privateKey = Buffer.from(this.privateKey, 'hex');
         const signer = new EthereumTx(tx);
         signer.sign(privateKey);
 
-        const hash = await this.call('eth_sendRawTransaction', ['0x' + signer.serialize().toString('hex')]);
-        return new TransactionResult(hash, this, tx);
+        return '0x' + signer.serialize().toString('hex');
     }
 
     async getNetVersion() {
