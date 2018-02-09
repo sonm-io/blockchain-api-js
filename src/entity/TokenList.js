@@ -15,10 +15,16 @@ class TokenList {
             symbol: 'Ether',
             name: 'Ethereum',
             decimals: '18',
+        }, {
+            address: 'sonmTokenAddress',
+            symbol: 'SNM',
+            name: 'SONM',
+            decimals: '18',
         }];
 
-        this.tokens = {};
-        this.contracts = {};
+        this.tokens = {
+            sonmTokenAddress: this.list[0]
+        };
     }
 
     getList() {

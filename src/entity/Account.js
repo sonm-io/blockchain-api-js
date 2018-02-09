@@ -24,14 +24,14 @@ class Account {
         this.tokens = {};
         this.nonce = 0;
 
-        this.sonmTokenContract = null;
+        this.sonmToken = null;
     }
 
     async initSonmToken(address) {
         const check = await isERC20(address, this.geth);
 
         if (check) {
-            this.sonmTokenContract = check.contract;
+            this.sonmToken = check;
         } else {
             return false;
         }
@@ -68,7 +68,7 @@ class Account {
         const gasPrice = toHex(await this.getGasPrice());
 
         const addresses = Object.keys(this.tokens);
-        return await this.sonmTokenContract.getTokens({
+        return await this.sonmToken.contract.getTokens({
             from: this.getAddress(),
             gasLimit,
             gasPrice,
@@ -96,7 +96,7 @@ class Account {
                 nonce: toHex(this.nonce),
             };
         } else {
-            const request = await this.sonmTokenContract.transfer.request(this.normalizeTarget(to), value);
+            const request = await this.sonmToken.getTransferRequest(this.normalizeTarget(to), value);
             tx = {
                 from: this.getAddress(),
                 gasLimit,
@@ -104,7 +104,7 @@ class Account {
                 value: 0,
                 to: tokenAddress,
                 nonce: toHex(this.nonce),
-                data: request.params[0].data,
+                data: request,
             };
         }
 
