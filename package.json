@@ -1,6 +1,10 @@
 {
   "name": "sonm-api",
+<<<<<<< HEAD
   "version": "1.0.9",
+=======
+  "version": "1.0.10",
+>>>>>>> WAL-49-work-without-internet
   "description": "",
   "main": "index.js",
   "scripts": {

@@ -9,16 +9,24 @@ class TokenList {
         invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
 
         this.geth = gethClient;
+        this.tokens = {};
 
         this.list = [{
             address: '0x',
             symbol: 'Ether',
             name: 'Ethereum',
             decimals: '18',
+        }, {
+            address: sonmTokenAddress,
+            symbol: 'SNM',
+            name: 'SONM',
+            decimals: '18',
         }];
 
-        this.tokens = {};
-        this.contracts = {};
+        //init sonm token by default
+        const token = new Token({gethClient: this.geth});
+        token.setData(this.list[1]);
+        this.tokens[sonmTokenAddress] = token
     }
 
     getList() {
