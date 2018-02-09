@@ -26,6 +26,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
     const ctrArguments = {
         gethClient,
         config: chainConfig,
+        sonmTokenAddress: chainConfig.contractAddress.token,
     };
 
     Object.assign(ctrArguments, params);
@@ -42,8 +43,6 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
         ctrArguments.address0x = address0x;
 
         const account = new Account(ctrArguments);
-
-        await account.initSonmToken(chainConfig.contractAddress.token);
 
         return account;
     }
@@ -66,8 +65,6 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
             gethClient,
             sonmTokenAddress: chainConfig.contractAddress.token,
         });
-
-        await tokenList.add(chainConfig.contractAddress.token);
 
         return tokenList;
     }

@@ -11,7 +11,7 @@ const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Account {
-    constructor({gethClient, address0x, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
+    constructor({gethClient, address0x, sonmTokenAddress, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
 
         invariant(gethClient, 'gethClient is not defined');
         invariant(address0x, 'address is not defined');
@@ -24,11 +24,12 @@ class Account {
         this.tokens = {};
         this.nonce = 0;
 
+        this.sonmTokenAddress = sonmTokenAddress;
         this.sonmToken = null;
     }
 
-    async initSonmToken(address) {
-        const check = await isERC20(address, this.geth);
+    async initSonmToken() {
+        const check = await isERC20(this.sonmTokenAddress, this.geth);
 
         if (check) {
             this.sonmToken = check;
@@ -64,6 +65,10 @@ class Account {
     }
 
     async requestTestTokens() {
+        if (!this.sonmToken) {
+            await this.initSonmToken();
+        }
+
         const gasLimit = toHex(await this.getGasLimit());
         const gasPrice = toHex(await this.getGasPrice());
 
@@ -96,7 +101,11 @@ class Account {
                 nonce: toHex(this.nonce),
             };
         } else {
-            const request = await this.sonmToken.getTransferRequest(this.normalizeTarget(to), value);
+            if (!this.sonmToken) {
+                await this.initSonmToken();
+            }
+
+            const request = await this.sonmToken.contract.transfer.request(this.normalizeTarget(to), value);
             tx = {
                 from: this.getAddress(),
                 gasLimit,
@@ -104,7 +113,7 @@ class Account {
                 value: 0,
                 to: tokenAddress,
                 nonce: toHex(this.nonce),
-                data: request,
+                data: request.params[0].data,
             };
         }
 

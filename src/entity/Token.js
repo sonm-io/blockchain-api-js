@@ -18,20 +18,11 @@ class Token {
 
     async getBalance(address) {
         if (!this.data.contract) {
-            await this.init(address);
+            await this.init(this.data.address);
         }
 
         const result = await this.data.contract.balanceOf(address);
         return result.toString();
-    }
-
-    async getTransferRequest(to, value) {
-        if (!this.data.contract) {
-            await this.init(address);
-        }
-
-        const raw = await this.data.contract.transfer.request(to, value);
-        return raw.params[0].data;
     }
 
     getAddress() {
@@ -45,6 +36,10 @@ class Token {
             name: this.data.name,
             decimals: this.data.decimals,
         }
+    }
+
+    setData(data) {
+        this.data = data;
     }
 }
 
