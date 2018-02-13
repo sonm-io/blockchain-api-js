@@ -1,17 +1,16 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const TransactionResult = require('../TransactionResult');
 const BN = require('bignumber.js');
 const toHex = require('../utils/to-hex');
-const isERC20 = require('../utils/check-token');
 const add0x = require('../utils/add-0x');
+const initContract = require('../utils/init-contract');
 
 const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = new BN(100000000000);
 
 class Account {
-    constructor({gethClient, address0x, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
+    constructor({gethClient, address0x, sonmTokenAddress, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
 
         invariant(gethClient, 'gethClient is not defined');
         invariant(address0x, 'address is not defined');
@@ -24,17 +23,12 @@ class Account {
         this.tokens = {};
         this.nonce = 0;
 
-        this.sonmTokenContract = null;
+        this.sonmTokenAddress = sonmTokenAddress;
+        this.sonmToken = null;
     }
 
-    async initSonmToken(address) {
-        const check = await isERC20(address, this.gethClient);
-
-        if (check) {
-            this.sonmTokenContract = check.contract;
-        } else {
-            return false;
-        }
+    initSonmToken(address) {
+        this.sonmTokenContract = initContract('token', this.gethClient, address);
     }
 
     setPrivateKey(privateKey) {
@@ -71,12 +65,7 @@ class Account {
         const gasLimit = toHex(await this.getGasLimit());
         const gasPrice = toHex(await this.getGasPrice());
 
-        const addresses = Object.keys(this.tokens);
-        return await this.sonmTokenContract.getTokens({
-            from: this.getAddress(),
-            gasLimit,
-            gasPrice,
-        });
+        return await this.sonmTokenContract.call('getTokens', [], this.getAddress(), gasLimit, gasPrice);
     }
 
     async send(to, amount, tokenAddress, gasLimit, gasPrice) {
@@ -106,8 +95,7 @@ class Account {
                 nonce: toHex(this.nonce),
             };
         } else {
-            const data = await this.sonmTokenContract.encode('transfer', [this.normalizeTarget(to), value]);
-
+	        const data = await this.sonmTokenContract.encode('transfer', [this.normalizeTarget(to), value]);
             tx = {
                 from: this.getAddress(),
                 gasLimit,
@@ -130,11 +118,6 @@ class Account {
     }
 
     async sendTokens(to, amount, tokenAddress, gasLimit, gasPrice) {
-        //get first one
-        if ( !tokenAddress ) {
-            tokenAddress = Object.keys(this.tokens)[0];
-        }
-
         return await this.send(to, amount, tokenAddress, gasLimit, gasPrice);
     }
 

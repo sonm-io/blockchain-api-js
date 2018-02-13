@@ -1,9 +1,6 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const Contract = require('../entity/Contract.js');
-const json = require('../../contracts/SNMT.json');
-
 const initContract = require('./init-contract');
 
 module.exports = async function isERC20(address, gethClient) {
@@ -12,22 +9,26 @@ module.exports = async function isERC20(address, gethClient) {
     invariant(gethClient, 'gethClient is not defined');
 
     if (await gethClient.getCode(address) !== '0x') {
-        const contract = await initContract('token', gethClient, address);
+        try {
+            const contract = initContract('token', gethClient, address);
 
-        const [name, symbol, decimals] = await Promise.all([
-            contract.call('name'),
-            contract.call('symbol'),
-            contract.call('decimals'),
-        ]);
+            const [name, symbol, decimals] = await Promise.all([
+                contract.call('name'),
+                contract.call('symbol'),
+                contract.call('decimals'),
+            ]);
 
-        return {
-            name,
-            symbol,
-            decimals: decimals.toNumber(),
-            address,
-            contract,
-        };
+            return {
+                name,
+                symbol,
+                decimals: decimals.toNumber(),
+                address,
+                contract,
+            };
+        } catch (err) {
+            throw new Error('not_erc20_token');
+        }
     } else {
-        return false;
+        throw new Error('not_smart_contract');
     }
 };

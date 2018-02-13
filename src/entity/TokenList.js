@@ -1,14 +1,15 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
+const initContract = require('../utils/init-contract');
 const Token = require('./Token');
 
 class TokenList {
-    constructor({gethClient, sonmTokenAddress}) {
+    constructor({gethClient}) {
         invariant(gethClient, 'gethClient is not defined');
-        invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
 
         this.gethClient = gethClient;
+        this.tokens = {};
 
         this.list = [{
             address: '0x',
@@ -16,9 +17,24 @@ class TokenList {
             name: 'Ethereum',
             decimals: '18',
         }];
+    }
 
-        this.tokens = {};
-        this.contracts = {};
+    async initSonmToken(sonmTokenAddress) {
+        invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
+
+        const info = {
+            address: sonmTokenAddress,
+            symbol: 'SNM',
+            name: 'SONM',
+            decimals: '18',
+        };
+
+        this.list.push(info);
+        info.contract = initContract('token', this.gethClient, sonmTokenAddress);
+
+        const token = new Token({gethClient: this.gethClient});
+        token.setData(info);
+        this.tokens[sonmTokenAddress] = token;
     }
 
     getList() {
@@ -49,8 +65,13 @@ class TokenList {
                     return false;
                 }
             }
-        } else {
-            return false;
+        }
+    }
+
+    async remove(address) {
+        if (this.tokens[address]) {
+            delete this.tokens[address];
+            this.list = this.list.filter(item => item.address !== address);
         }
     }
 
@@ -58,10 +79,10 @@ class TokenList {
         const token = new Token({gethClient: this.gethClient});
         const tokenInfo = await token.init(address);
 
-        if (tokenInfo) {
+        try {
             return token.getInfo();
-        } else {
-            return false;
+        } catch (err) {
+            throw err;
         }
     }
 

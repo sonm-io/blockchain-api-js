@@ -69,13 +69,27 @@ describe('Profile entity', function () {
             expect(TokenList.getList().length).equal(2);
 
             const balances = await TokenList.getBalances(VASYA.getAddress());
-
             expect(balances).to.have.all.keys('0x', sonmTokenAddress);
         });
 
         it('should check smartContract on address', async function () {
             expect(await isERC20(sonmTokenAddress, VASYA.gethClient)).to.be.an('object');
-            expect(await isERC20(VASYA.getAddress(), VASYA.gethClient)).equal(false);
+
+            try {
+                await isERC20(VASYA.getAddress(), VASYA.gethClient);
+            } catch (err) {
+                expect(err).to.be.an('error');
+            }
+        });
+
+        it('should add and remove Token', async function () {
+            const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
+
+            await TokenList.add(tokenAddress);
+            expect(TokenList.getList().length).equal(3);
+
+            await TokenList.remove(tokenAddress);
+            expect(TokenList.getList().length).equal(2);
         });
 
         it('should generate new account and recover private key from it', async function () {

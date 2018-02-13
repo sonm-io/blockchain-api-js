@@ -21,11 +21,6 @@ class Token {
         return result[0].toString();
     }
 
-    async transfer(to, value) {
-        const raw = await this.data.contract.call('transfer', [to, value]);
-        return raw.params[0].data;
-    }
-
     getAddress() {
         return this.data.address;
     }
@@ -37,6 +32,10 @@ class Token {
             name: this.data.name,
             decimals: this.data.decimals,
         }
+    }
+
+    setData(data) {
+        this.data = data;
     }
 }
 

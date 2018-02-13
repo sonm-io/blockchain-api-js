@@ -19,11 +19,13 @@ class Contract {
         }
     }
 
-    async call(method, params = [], from = undefined) {
+    async call(method, params = [], from = undefined, gasLimit = undefined, gasPrice = undefined) {
         const requestParams = [{
             to: this.address,
             data: this.encode(method, params),
             from,
+            gasLimit,
+            gasPrice,
         }, 'latest' ];
 
         const response = await this.gethClient.call('eth_call', requestParams);

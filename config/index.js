@@ -1,5 +1,5 @@
 module.exports = {
-    "live": {
+    "livenet": {
         "contractAddress": {
             "token": "0x983F6d60db79ea8cA4eB9968C6aFf8cfA04B3c63",
         },

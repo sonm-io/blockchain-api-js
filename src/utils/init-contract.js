@@ -7,7 +7,7 @@ const contracts = {
     token: require('../../contracts/SNMT.json'),
 };
 
-module.exports = async function (name, gethClient, address) {
+module.exports = function (name, gethClient, address) {
     invariant(gethClient, 'gethClient is not defined');
     invariant(name, 'set current contract name');
     invariant(address, 'address is not defined');

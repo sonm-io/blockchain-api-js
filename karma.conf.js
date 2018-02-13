@@ -3,13 +3,16 @@ module.exports = function(config) {
     browserNoActivityTimeout: 60000,
 
     frameworks: [ 'browserify', 'mocha' ],
-    preprocessors: {
+
+      preprocessors: {
       'test/**/*.js': [ 'browserify' ],
       'src/**/*.js': [ 'browserify' ],
     },
 
     browsers: ['Chrome'], // You may use 'ChromeCanary', 'Chromium' or any other supported browser
-    singleRun: true,
+
+      singleRun: true,
+
     files: [
       "src/**/*.js",
       "test/*.test.js"
