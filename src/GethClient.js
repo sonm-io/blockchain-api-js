@@ -3,6 +3,7 @@ const fromHex = require('./utils/from-hex');
 const Buffer = require('buffer').Buffer;
 const EthereumTx = require('ethereumjs-tx');
 const TransactionResult = require('./TransactionResult');
+const fetch = require('node-fetch');
 
 module.exports = class GethClient {
     constructor(url, timeout = 30000) {

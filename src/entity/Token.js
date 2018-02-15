@@ -18,7 +18,7 @@ class Token {
 
     async getBalance(address) {
         const result = await this.data.contract.call('balanceOf', [address]);
-        return result[0].toString();
+        return result.toString();
     }
 
     getAddress() {

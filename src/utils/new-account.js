@@ -1,8 +1,9 @@
 const Buffer = require('safe-buffer').Buffer;
-const crypto = require('crypto-browserify');
+const bcrypto = require('browserify-aes');
 const scryptjs = require('scrypt-async');
-const sha3 = require('js-sha3').keccak256;
+const sha3 = require('js-sha3').keccak_256;
 const secp256k1 = require('secp256k1');
+const randomBytes = require('randombytes');
 
 module.exports = function(passphrase = '', opts = {})
 {
@@ -10,12 +11,12 @@ module.exports = function(passphrase = '', opts = {})
         throw new Error('Need password');
     }
 
-    const privateKey = new Buffer(crypto.randomBytes(32), 'hex');
+    const privateKey = new Buffer(randomBytes(32), 'hex');
     const publicKey = secp256k1.publicKeyCreate(privateKey, false).slice(1);
     const address = sha3(publicKey).slice(-20);
 
-    const salt = crypto.randomBytes(32);
-    const iv = crypto.randomBytes(16);
+    const salt = randomBytes(32);
+    const iv = randomBytes(16);
     const cipherType = opts.cipher || 'aes-128-ctr';
 
     const kdfparams = {
@@ -39,7 +40,7 @@ module.exports = function(passphrase = '', opts = {})
         derivedKey = key;
     });
 
-    const cipher = crypto.createCipheriv(cipherType, derivedKey.slice(0, 16), iv);
+    const cipher = bcrypto.createCipheriv(cipherType, derivedKey.slice(0, 16), iv);
 
     if (!cipher) {
         throw new Error('Unsupported cipher')
@@ -50,7 +51,7 @@ module.exports = function(passphrase = '', opts = {})
 
     return {
         version: 3,
-        id: crypto.randomBytes(16).toString('hex'),
+        id: randomBytes(16).toString('hex'),
         address: address,
         crypto: {
             ciphertext: ciphertext.toString('hex'),

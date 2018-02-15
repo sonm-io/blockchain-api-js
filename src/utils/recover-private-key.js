@@ -2,7 +2,7 @@
 
 const Buffer = require('safe-buffer').Buffer;
 const scryptjs = require('scrypt-async');
-const sha3 = require('js-sha3').keccak256;
+const sha3 = require('js-sha3').keccak_256;
 const bcrypto = require('browserify-aes');
 
 module.exports = function (json, password) {

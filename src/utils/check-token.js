@@ -26,6 +26,7 @@ module.exports = async function isERC20(address, gethClient) {
                 contract,
             };
         } catch (err) {
+            console.log(err);
             throw new Error('not_erc20_token');
         }
     } else {
