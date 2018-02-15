@@ -1,7 +1,8 @@
-const ethUtil = require('ethereumjs-util');
 const Buffer = require('safe-buffer').Buffer;
 const crypto = require('crypto-browserify');
 const scryptjs = require('scrypt-async');
+const sha3 = require('js-sha3').keccak256;
+const secp256k1 = require('secp256k1');
 
 module.exports = function(passphrase = '', opts = {})
 {
@@ -10,8 +11,8 @@ module.exports = function(passphrase = '', opts = {})
     }
 
     const privateKey = new Buffer(crypto.randomBytes(32), 'hex');
-    const publicKey = ethUtil.privateToPublic(privateKey);
-    const address = ethUtil.publicToAddress(publicKey).toString('hex');
+    const publicKey = secp256k1.publicKeyCreate(privateKey, false).slice(1);
+    const address = sha3(publicKey).slice(-20);
 
     const salt = crypto.randomBytes(32);
     const iv = crypto.randomBytes(16);
@@ -45,7 +46,7 @@ module.exports = function(passphrase = '', opts = {})
     }
 
     const ciphertext = Buffer.concat([cipher.update(privateKey), cipher.final()]);
-    const mac = ethUtil.sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), new Buffer(ciphertext, 'hex')]));
+    const mac = sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), new Buffer(ciphertext, 'hex')]));
 
     return {
         version: 3,
@@ -59,7 +60,7 @@ module.exports = function(passphrase = '', opts = {})
             cipher: cipherType,
             kdf: 'scrypt',
             kdfparams: kdfparams,
-            mac: mac.toString('hex')
+            mac: mac,
         }
     }
 };
