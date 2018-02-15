@@ -1,5 +1,5 @@
 const ethUtil = require('ethereumjs-util');
-const Buffer = require('buffer').Buffer;
+const Buffer = require('safe-buffer').Buffer;
 const crypto = require('crypto-browserify');
 const scryptjs = require('scrypt-async');
 

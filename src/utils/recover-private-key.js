@@ -1,8 +1,8 @@
 'use strict';
 
-const Buffer = require('buffer').Buffer;
+const Buffer = require('safe-buffer').Buffer;
 const scryptjs = require('scrypt-async');
-const sha3 = require('js-sha3').keccak256;
+const sha3 = require('ethereumjs-util').sha3;
 const bcrypto = require('browserify-aes');
 
 module.exports = function (json, password) {
@@ -24,11 +24,9 @@ module.exports = function (json, password) {
     }
 
     const ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
-
-    //const mac = sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
     const mac = sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), ciphertext]));
 
-    if (mac !== json.crypto.mac) {
+    if (mac.toString('hex') !== json.crypto.mac) {
         throw new Error('Key derivation failed - possibly wrong passphrase')
     }
 
