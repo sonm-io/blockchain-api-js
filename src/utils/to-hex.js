@@ -1,4 +1,4 @@
-const BN = require('bignumber.js');
+const BN = require('ethereumjs-util').BN;
 
 module.exports = function toHex(val) {
     let result;

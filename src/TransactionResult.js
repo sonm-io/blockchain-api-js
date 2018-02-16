@@ -1,4 +1,4 @@
-const BN = require('bignumber.js');
+const BN = require('ethereumjs-util').BN;
 
 const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;

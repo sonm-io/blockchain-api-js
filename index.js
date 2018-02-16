@@ -5,7 +5,6 @@ const GethClient = require('./src/GethClient');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 const newAccount = require('./src/utils/new-account.js');
 const TransactionResult = require('./src/TransactionResult');
-const { fromWei, toWei, toBigNumber } = require('./src/utils/format-ether');
 
 const config = require('./config');
 
@@ -76,8 +75,5 @@ module.exports = {
         recoverPrivateKey,
         add0x,
         newAccount,
-        fromWei,
-        toWei,
-        toBigNumber,
     },
 };

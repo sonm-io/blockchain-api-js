@@ -1,7 +1,7 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const BN = require('bignumber.js');
+const BN = require('ethereumjs-util').BN;
 const toHex = require('../utils/to-hex');
 const add0x = require('../utils/add-0x');
 const initContract = require('../utils/init-contract');
