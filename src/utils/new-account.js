@@ -3,13 +3,22 @@ const Buffer = require('buffer').Buffer;
 const crypto = require('crypto-browserify');
 const scryptjs = require('scrypt-async');
 
-module.exports = function(passphrase = '', opts = {})
+module.exports = function(passphrase = '', privateKey = '', opts = {})
 {
     if (!passphrase) {
         throw new Error('Need password');
     }
 
-    const privateKey = new Buffer(crypto.randomBytes(32), 'hex');
+    if (!privateKey) {
+        privateKey = new Buffer(crypto.randomBytes(32), 'hex');
+    } else {
+        privateKey = new Buffer(privateKey, 'hex');
+
+        if (!ethUtil.isValidPrivate(privateKey)) {
+            throw new Error('PrivateKey not valid');
+        }
+    }
+
     const publicKey = ethUtil.privateToPublic(privateKey);
     const address = ethUtil.publicToAddress(publicKey).toString('hex');
 
