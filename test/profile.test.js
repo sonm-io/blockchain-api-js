@@ -119,7 +119,7 @@ describe('Profile entity', function () {
 
             console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
 
-            const txResult = await VASYA.sendEther(PETYA, qty, 1000000, 100000000000);
+            const txResult = await VASYA.sendEther(PETYA, qty, 1000000, 200000000000);
             console.log(`transaction hash ${await txResult.getHash()}`);
 
             const receipt = await txResult.getReceipt();
@@ -132,9 +132,8 @@ describe('Profile entity', function () {
                 PETYA.getBalance(),
             ]);
 
-
-            expect('' + newVasyaBalance).equal('' + new BN(vasyaBalance).minus(qty).minus(txPrice));
-            expect('' + newPetyaBalance).equal('' + new BN(petyaBalance).plus(qty));
+            expect(newVasyaBalance.toString()).equal(new BN(vasyaBalance).sub(new BN(qty)).sub(new BN(txPrice)).toString());
+            expect(newPetyaBalance.toString()).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
 
@@ -152,14 +151,14 @@ describe('Profile entity', function () {
 
             console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
 
-            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, sonmTokenAddress, 1000001, 100000000000);
+            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, sonmTokenAddress, 1000001, 200000000000);
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
             const receipt = await txResult.getReceipt();
 
-            expect('' + await sonmToken.getBalance(VASYA.getAddress())).equal('' + new BN(vasyaBalance).minus(qty));
-            expect('' + await sonmToken.getBalance(PETYA.getAddress())).equal('' + new BN(petyaBalance).plus(qty));
+            expect(await sonmToken.getBalance(VASYA.getAddress())).equal(new BN(vasyaBalance).sub(new BN(qty)).toString());
+            expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
 });

@@ -1,4 +1,5 @@
 const BN = require('ethereumjs-util').BN;
+const fromHex = require('./utils/from-hex');
 
 const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
@@ -80,7 +81,7 @@ class TxResult {
         const receipt = await this.getReceipt();
         const transaction = await this.getTransaction();
 
-        return new BN(transaction.gasPrice).mul(receipt.gasUsed);
+        return new BN(fromHex(transaction.gasPrice)).mul(new BN(fromHex(receipt.gasUsed))).toString();
     }
 
     async getConfirmationsCount() {
