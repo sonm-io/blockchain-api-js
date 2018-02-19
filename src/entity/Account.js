@@ -24,7 +24,7 @@ class Account {
         this.nonce = 0;
 
         this.sonmTokenAddress = sonmTokenAddress;
-        this.sonmToken = null;
+        this.sonmTokenContract = null;
     }
 
     initSonmToken(address) {
