@@ -97,6 +97,12 @@ describe('Profile entity', function () {
             const privateKey = getPrivateKey(json, password);
 
             expect(privateKey).to.be.an('string');
+
+            //generate from private key
+            const json1 = newAccount(password, privateKey);
+            const privateKeyFromAccount = getPrivateKey(json1, password);
+
+            expect(privateKeyFromAccount).equal(privateKey);
         });
     });
 
