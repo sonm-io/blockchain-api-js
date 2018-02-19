@@ -4,13 +4,22 @@ const scryptjs = require('scrypt-async');
 const randomBytes = require('randombytes');
 const ethUtil = require('ethereumjs-util');
 
-module.exports = function(passphrase = '', opts = {})
+module.exports = function(passphrase = '', privateKey = '', opts = {})
 {
     if (!passphrase) {
         throw new Error('Need password');
     }
 
-    const privateKey = new Buffer(randomBytes(32), 'hex');
+    if (!privateKey) {
+        privateKey = new Buffer(randomBytes(32), 'hex');
+    } else {
+        privateKey = new Buffer(privateKey, 'hex');
+
+        if (!ethUtil.isValidPrivate(privateKey)) {
+            throw new Error('PrivateKey not valid');
+        }
+    }
+
     const publicKey = ethUtil.privateToPublic(privateKey);
     const address = ethUtil.publicToAddress(publicKey).toString('hex');
 
