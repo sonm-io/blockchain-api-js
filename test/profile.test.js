@@ -100,7 +100,7 @@ describe('Profile entity', function () {
             expect(privateKey).to.be.an('string');
 
             //generate from private key
-            const json1 = newAccount(password, privateKey);
+            const json1 = newAccount(password, '0x' + privateKey);
             const privateKeyFromAccount = getPrivateKey(json1, password);
 
             expect(privateKeyFromAccount).equal(privateKey);
