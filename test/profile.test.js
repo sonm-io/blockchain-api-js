@@ -8,7 +8,7 @@ const randomBytes = require('randombytes');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
-let VASYA, PETYA, TokenList, sonmTokenAddress;
+let VASYA, PETYA, TokenList, sonmTokenAddress, profile;
 
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const petyaCfg = require('./data/Petya_qazwsxedc.json');
@@ -57,6 +57,10 @@ before(async function () {
 
     console.log('Init token lists...');
     TokenList = await vasyaClient.createTokenList();
+
+    console.log('Profiles...');
+    profile = await vasyaClient.createProfile();
+    console.log(await profile.resolveAddress(vasyaCfg.address));
     console.log('done');
 });
 

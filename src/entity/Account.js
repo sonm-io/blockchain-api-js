@@ -107,6 +107,8 @@ class Account {
             };
         }
 
+        console.log(tx);
+
         this.nonce++;
 
         return tx;

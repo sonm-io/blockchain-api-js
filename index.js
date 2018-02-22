@@ -1,5 +1,6 @@
 const Account = require('./src/entity/Account');
 const TokenList = require('./src/entity/TokenList');
+const Profile = require('./src/entity/Profile');
 const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
@@ -59,6 +60,16 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
         return tokenList;
     }
 
+    async function createProfile() {
+        const profile = new Profile({
+            gethClient,
+        });
+
+        await profile.init(chainConfig.contractAddress.profile);
+
+        return profile;
+    }
+
     return {
         gethClient,
         createAccount,
@@ -66,6 +77,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
         setPrivateKey,
         getSonmTokenAddress,
         createTokenList,
+        createProfile,
     };
 };
 

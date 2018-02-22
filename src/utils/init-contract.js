@@ -5,6 +5,7 @@ const Contract = require('../entity/Contract.js');
 
 const contracts = {
     token: require('../../contracts/SNMT.json'),
+    profile: require('../../contracts/CentralRegistry.json'),
 };
 
 module.exports = function (name, gethClient, address) {
