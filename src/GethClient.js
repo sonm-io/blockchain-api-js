@@ -1,45 +1,95 @@
-const Web3 = require('web3');
 const invariant = require('fbjs/lib/invariant');
+const fromHex = require('./utils/from-hex');
+const Buffer = require('buffer').Buffer;
+const EthereumTx = require('ethereumjs-tx');
 const TransactionResult = require('./TransactionResult');
-const createAsyncMethods = require('./utils/create-async-web3-methods.js');
 
 module.exports = class GethClient {
-    constructor(provider) {
-        invariant(provider, 'provider is not defined');
+    constructor(url, timeout = 30000) {
+        invariant(url, 'url is not defined');
 
-        this.web3 = new Web3(provider);
-        this.provider = provider;
-        this.methods = {};
-        this.gasPrice = null;
+        this.requestCounter = 1;
+        this.url = url;
+        this.timeout = timeout;
+        this.privateKey = null;
     }
 
-    setProvider(provider) {
-        this.provider = provider;
-        this.web3.setProvider(provider);
-    }
+    async call(method, params = []) {
+        const body = {
+            method: method,
+            jsonrpc: '2.0',
+            params: params,
+            id: this.requestCounter++
+        };
 
-    method(methodName) {
-        if (!this.methods[methodName]) {
-            Object.assign(
-                this.methods,
-                createAsyncMethods(this.web3, methodName)
-            );
+        const response = await fetch(this.url, {
+            timeout: this.timeout,
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if(response.status === 200) {
+            const json = await response.json();
+
+            if (json.error) {
+                throw Error(json.error.message);
+            } else {
+                return json.result;
+            }
+        } else {
+            throw Error('Something wrong');
         }
-
-        return this.methods[methodName];
     }
 
-    async getGasPrice(force) {
-        if (force || !this.gasPrice) {
-            this.gasPrice = await this.method('getGasPrice')();
-        }
+    async getGasPrice() {
+        return fromHex(await this.call('eth_gasPrice'));
+    }
 
-        return this.gasPrice;
+    async getBalance(address) {
+        const res = await this.call('eth_getBalance', [address, 'latest']);
+
+        return fromHex(res);
+    }
+
+    async getCode(address) {
+        return await this.call('eth_getCode', [address, 'latest']);
+    }
+
+    async getTransaction(hash) {
+        return await this.call('eth_getTransaction', [hash]);
+    }
+
+    async getTransactionReceipt(hash) {
+        return await this.call('eth_getTransactionReceipt', [hash]);
+    }
+
+    async getBlockNumber() {
+        return await this.call('eth_blockNumber');
+    }
+
+    async getTransactionCount(address) {
+        return fromHex(await this.call('eth_getTransactionCount', [address, 'latest']));
     }
 
     async sendTransaction(tx) {
-        const hash = await this.method('sendTransaction')(tx);
-
+        const hash = await this.call('eth_sendRawTransaction', [this.getRawTransaction(tx)]);
         return new TransactionResult(hash, this, tx);
+    }
+
+    getRawTransaction(tx) {
+        const privateKey = Buffer.from(this.privateKey, 'hex');
+        const signer = new EthereumTx(tx);
+        signer.sign(privateKey);
+
+        return '0x' + signer.serialize().toString('hex');
+    }
+
+    async getNetVersion() {
+        return await this.call('net_version');
+    }
+
+    setPrivateKey(privateKey) {
+        this.privateKey = privateKey;
     }
 };

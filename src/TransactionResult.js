@@ -1,4 +1,5 @@
-const BN = require('bignumber.js');
+const BN = require('ethereumjs-util').BN;
+const fromHex = require('./utils/from-hex');
 
 const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 10;
@@ -60,7 +61,7 @@ class TxResult {
 
     async getTransaction() {
         if (this._txParams === null) {
-            this._txParams = await this._geth.method('getTransaction')(await this.getHash());
+            this._txParams = await this._geth.getTransaction(await this.getHash());
             this.validateTxParams(this._txParams);
         }
 
@@ -80,13 +81,13 @@ class TxResult {
         const receipt = await this.getReceipt();
         const transaction = await this.getTransaction();
 
-        return new BN(transaction.gasPrice).mul(receipt.gasUsed);
+        return new BN(fromHex(transaction.gasPrice)).mul(new BN(fromHex(receipt.gasUsed))).toString();
     }
 
     async getConfirmationsCount() {
         const [receipt, currentBlockNumber] = await Promise.all([
             this.getReceipt(),
-            this._geth.method('getBlockNumber')(),
+            this._geth.getBlockNumber(),
         ]);
 
         return (currentBlockNumber > receipt.blockNumber) ? currentBlockNumber - receipt.blockNumber : 0;
@@ -103,7 +104,7 @@ class TxResult {
                 const timeoutTask = setTimeout(() => reject(`getReceipt timeout: ${MAX_TIMEOUT}`), MAX_TIMEOUT);
 
                 const check = async () => {
-                    const result = await this._geth.method('getTransactionReceipt')(hash);
+                    const result = await this._geth.getTransactionReceipt(hash);
 
                     if (result) {
                         clearTimeout(timeoutTask);

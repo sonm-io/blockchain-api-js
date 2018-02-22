@@ -1,14 +1,14 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
+const initContract = require('../utils/init-contract');
 const Token = require('./Token');
 
 class TokenList {
-    constructor({gethClient, sonmTokenAddress}) {
+    constructor({gethClient}) {
         invariant(gethClient, 'gethClient is not defined');
-        invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
 
-        this.geth = gethClient;
+        this.gethClient = gethClient;
         this.tokens = {};
 
         this.list = [{
@@ -16,17 +16,25 @@ class TokenList {
             symbol: 'Ether',
             name: 'Ethereum',
             decimals: '18',
-        }, {
+        }];
+    }
+
+    async initSonmToken(sonmTokenAddress) {
+        invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
+
+        const info = {
             address: sonmTokenAddress,
             symbol: 'SNM',
             name: 'SONM',
             decimals: '18',
-        }];
+        };
 
-        //init sonm token by default
-        const token = new Token({gethClient: this.geth});
-        token.setData(this.list[1]);
-        this.tokens[sonmTokenAddress] = token
+        this.list.push(info);
+        info.contract = initContract('token', this.gethClient, sonmTokenAddress);
+
+        const token = new Token({gethClient: this.gethClient});
+        token.setData(info);
+        this.tokens[sonmTokenAddress] = token;
     }
 
     getList() {
@@ -42,22 +50,7 @@ class TokenList {
             if (this.tokens[address]) {
                 return this.tokens[address];
             } else {
-                try {
-                    const token = new Token({gethClient: this.geth});
-                    const tokenInfo = await token.init(address);
-
-                    this.tokens[tokenInfo.address] = token;
-
-                    const info = token.getInfo();
-
-                    this.list.push(info);
-
-                    return info;
-                } catch (err) {
-                    throw err;
-                }
-
-                const token = new Token({gethClient: this.geth});
+                const token = new Token({gethClient: this.gethClient});
                 const tokenInfo = await token.init(address);
 
                 if (tokenInfo) {
@@ -83,10 +76,10 @@ class TokenList {
     }
 
     async getTokenInfo(address) {
-        try {
-            const token = new Token({gethClient: this.geth});
-            const tokenInfo = await token.init(address);
+        const token = new Token({gethClient: this.gethClient});
+        const tokenInfo = await token.init(address);
 
+        try {
             return token.getInfo();
         } catch (err) {
             throw err;
@@ -98,7 +91,7 @@ class TokenList {
 
         try {
             let requests = [
-                this.geth.method('getBalance')(address)
+                this.gethClient.getBalance(address)
             ];
 
             for (const tokenAddress in this.tokens) {

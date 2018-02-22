@@ -1,7 +1,8 @@
-const ethUtil = require('ethereumjs-util');
-const Buffer = require('buffer').Buffer;
-const crypto = require('crypto-browserify');
+const Buffer = require('safe-buffer').Buffer;
+const crypto = require('browserify-aes');
 const scryptjs = require('scrypt-async');
+const randomBytes = require('randombytes');
+const ethUtil = require('ethereumjs-util');
 
 module.exports = function(passphrase = '', privateKey = '', opts = {})
 {
@@ -10,7 +11,7 @@ module.exports = function(passphrase = '', privateKey = '', opts = {})
     }
 
     if (!privateKey) {
-        privateKey = new Buffer(crypto.randomBytes(32), 'hex');
+        privateKey = new Buffer(randomBytes(32), 'hex');
     } else {
         if (privateKey.startsWith('0x')) {
             privateKey = privateKey.substr(2);
@@ -26,8 +27,8 @@ module.exports = function(passphrase = '', privateKey = '', opts = {})
     const publicKey = ethUtil.privateToPublic(privateKey);
     const address = ethUtil.publicToAddress(publicKey).toString('hex');
 
-    const salt = crypto.randomBytes(32);
-    const iv = crypto.randomBytes(16);
+    const salt = randomBytes(32);
+    const iv = randomBytes(16);
     const cipherType = opts.cipher || 'aes-128-ctr';
 
     const kdfparams = {
@@ -62,7 +63,7 @@ module.exports = function(passphrase = '', privateKey = '', opts = {})
 
     return {
         version: 3,
-        id: crypto.randomBytes(16).toString('hex'),
+        id: randomBytes(16).toString('hex'),
         address: address,
         crypto: {
             ciphertext: ciphertext.toString('hex'),
@@ -72,7 +73,7 @@ module.exports = function(passphrase = '', privateKey = '', opts = {})
             cipher: cipherType,
             kdf: 'scrypt',
             kdfparams: kdfparams,
-            mac: mac.toString('hex')
+            mac: mac.toString('hex'),
         }
     }
 };

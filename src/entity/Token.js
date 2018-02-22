@@ -7,22 +7,18 @@ class Token {
     constructor({gethClient}) {
         invariant(gethClient, 'gethClient is not defined');
 
-        this.geth = gethClient;
+        this.gethClient = gethClient;
         this.data = null;
     }
 
     async init(address) {
-        this.data = await isERC20(address, this.geth);
+        this.data = await isERC20(address, this.gethClient);
         return this.data;
     }
 
     async getBalance(address) {
-        if (!this.data.contract) {
-            await this.init(this.data.address);
-        }
-
-        const result = await this.data.contract.balanceOf(address);
-        return result.toString();
+        const result = await this.data.contract.call('balanceOf', [address]);
+        return result[0].toString();
     }
 
     getAddress() {
