@@ -7,7 +7,7 @@ const add0x = require('../utils/add-0x');
 const initContract = require('../utils/init-contract');
 
 const GAS_LIMIT_DEFAULT = 200000;
-const GAS_PRICE_MAX = new BN(100000000000);
+const GAS_PRICE_MAX = '100000000000';
 
 class Account {
     constructor({gethClient, address0x, sonmTokenAddress, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
@@ -51,10 +51,12 @@ class Account {
     async getGasPrice() {
         let result = await this.gethClient.getGasPrice();
 
-        if (result.gt(this.limitGasPrice)) {
+        if (new BN(result).gt(this.limitGasPrice)) {
+
             if (this.throwGasPriceError) {
-                throw new Error('Too much gas price ' + result.toFormat());
+                throw new Error('Too much gas price ' + result);
             }
+
             result = GAS_PRICE_MAX;
         }
 

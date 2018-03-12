@@ -45,9 +45,9 @@ before(async function () {
     vasyaClient.setPrivateKey(vasyaPrivateKey);
     petyaClient.setPrivateKey(petyaPrivateKey);
 
-    // // console.log('Request test tokens....');
-    // // await VASYA.requestTestTokens();
-    // // await PETYA.requestTestTokens();
+    //console.log('Request test tokens....');
+    //await VASYA.requestTestTokens();
+    //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice);
