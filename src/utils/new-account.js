@@ -13,6 +13,10 @@ module.exports = function(passphrase = '', privateKey = '', opts = {})
     if (!privateKey) {
         privateKey = new Buffer(randomBytes(32), 'hex');
     } else {
+        if (privateKey.startsWith('0x')) {
+            privateKey = privateKey.substr(2);
+        }
+
         privateKey = new Buffer(privateKey, 'hex');
 
         if (!ethUtil.isValidPrivate(privateKey)) {

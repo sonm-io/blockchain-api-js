@@ -57,7 +57,7 @@ module.exports = class GethClient {
     }
 
     async getTransaction(hash) {
-        return await this.call('eth_getTransaction', [hash]);
+        return await this.call('eth_getTransactionByHash', [hash]);
     }
 
     async getTransactionReceipt(hash) {

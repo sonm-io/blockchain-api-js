@@ -45,9 +45,9 @@ before(async function () {
     vasyaClient.setPrivateKey(vasyaPrivateKey);
     petyaClient.setPrivateKey(petyaPrivateKey);
 
-    // // console.log('Request test tokens....');
-    // // await VASYA.requestTestTokens();
-    // // await PETYA.requestTestTokens();
+    //console.log('Request test tokens....');
+    //await VASYA.requestTestTokens();
+    //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice);
@@ -103,7 +103,7 @@ describe('Profile entity', function () {
             expect(privateKey).to.be.an('string');
 
             //generate from private key
-            const json1 = newAccount(password, privateKey);
+            const json1 = newAccount(password, '0x' + privateKey);
             const privateKeyFromAccount = getPrivateKey(json1, password);
 
             expect(privateKeyFromAccount).equal(privateKey);
