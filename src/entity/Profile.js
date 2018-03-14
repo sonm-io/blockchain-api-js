@@ -15,17 +15,17 @@ class Profile {
     }
 
     async resolveAddress(address) {
-        const response = [];
+        const info = {};
         const indexes = await this.contract.call('GetAllIndexes', [add0x(address)]);
 
         for(const index of indexes) {
-            console.log(index);
-
             const item = await this.contract.call('GetRecordByIndex', [index]);
-            response.push(item);
+            const [name, value] = item[1].split(':');
+
+            info[name] = value;
         }
 
-        return response;
+        return info;
     }
 }
 

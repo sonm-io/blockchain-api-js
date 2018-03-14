@@ -6,7 +6,7 @@
       "inputs": [
         {
           "name": "value",
-          "type": "bytes"
+          "type": "string"
         },
         {
           "name": "index",
@@ -73,7 +73,7 @@
         },
         {
           "name": "certificate",
-          "type": "bytes"
+          "type": "string"
         }
       ],
       "payable": false,
@@ -135,29 +135,6 @@
       ],
       "payable": false,
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "whom",
-          "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "bytes"
-        }
-      ],
-      "name": "AddRecord",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -232,7 +209,7 @@
         },
         {
           "name": "certificate",
-          "type": "bytes"
+          "type": "string"
         }
       ],
       "payable": false,
@@ -275,6 +252,29 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "whom",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "name": "AddRecord",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
