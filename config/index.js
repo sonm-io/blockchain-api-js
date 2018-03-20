@@ -11,7 +11,7 @@ module.exports = {
     },
     "testrpc": {
         "contractAddress": {
-            "token": process.env.CI_SONM_TOKEN_ADDRESS || "0x06bda3cf79946e8b32a0bb6a3daa174b577c55b5",
+            "token": "0xb29d1e8259571de17429b771ca455210f25b9fce",
         },
     },
 };
