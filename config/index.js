@@ -10,4 +10,9 @@ module.exports = {
             "profile": "0xaa6586d6a4c91b993b186a6f445f94b4ad60e167",
         },
     },
+    "testrpc": {
+        "contractAddress": {
+            "token": "0xb29d1e8259571de17429b771ca455210f25b9fce",
+        },
+    },
 };
