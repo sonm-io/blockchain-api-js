@@ -14,4 +14,9 @@ module.exports = {
             "token": "0xb29d1e8259571de17429b771ca455210f25b9fce",
         },
     },
+    "private": {
+        "contractAddress": {
+            "token": "0x4ce4ba7ed9d4be581260974efd07c7bffcb34cea",
+        },
+    },
 };
