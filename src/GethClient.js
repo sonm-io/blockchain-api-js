@@ -49,6 +49,7 @@ module.exports = class GethClient {
                 throw Error('sonmapi_node_fatal_error');
             }
         } catch(err) {
+            console.log(err);
             throw Error('sonmapi_network_error');
         }
     }
