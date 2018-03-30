@@ -14,8 +14,9 @@ module.exports = class GethClient {
         this.timeout = timeout;
         this.privateKey = null;
         this.errors = {
-            'Error: intrinsic gas too low': 'sonmapi_gas_too_low',
-            'Error: insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
+            'intrinsic gas too low': 'sonmapi_gas_too_low',
+            'insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
+            'Failed to fetch': 'sonmapi_network_error',
         };
     }
 
@@ -39,9 +40,7 @@ module.exports = class GethClient {
                 const json = await response.json();
 
                 if (json.error) {
-                    const error = this.errors[json.error.message] ? this.errors[json.error.message] : 'sonmapi_unknown_error';
-
-                    throw Error(error);
+                    throw Error(json.error.message);
                 } else {
                     return json.result;
                 }
@@ -49,8 +48,9 @@ module.exports = class GethClient {
                 throw Error('sonmapi_node_fatal_error');
             }
         } catch(err) {
-            console.log(err);
-            throw Error('sonmapi_network_error');
+            const error = this.errors[err.message] ? this.errors[err.message] : 'sonmapi_unknown_error';
+
+            throw Error(error);
         }
     }
 
