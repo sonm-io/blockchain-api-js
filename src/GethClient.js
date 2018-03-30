@@ -39,7 +39,7 @@ module.exports = class GethClient {
                 const json = await response.json();
 
                 if (json.error) {
-                    const error = this.errors[json.error.message] || 'sonmapi_unknown_error';
+                    const error = this.errors[json.error.message] ? this.errors[json.error.message] : 'sonmapi_unknown_error';
 
                     throw Error(error);
                 } else {
