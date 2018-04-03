@@ -4,6 +4,7 @@ const invariant = require('fbjs/lib/invariant');
 const initContract = require('../utils/init-contract');
 const Token = require('./Token');
 const add0x = require('../utils/add-0x');
+const BN = require('ethereumjs-util').BN;
 
 class TokenList {
     constructor({gethClient}) {
@@ -77,14 +78,30 @@ class TokenList {
         }
     }
 
-    async getTokenInfo(address, from = null) {
+    async getTokenInfo(address, accounts = null) {
         const token = new Token({gethClient: this.gethClient});
         await token.init(address);
 
         const tokenInfo = await token.init(address);
 
-        if (from) {
-            tokenInfo.balance = await token.getBalance(from);
+        if (accounts) {
+            if (!Array.isArray(accounts)) {
+                accounts = [accounts];
+            }
+
+            tokenInfo.balance = new BN(0);
+            const requests = [];
+            for (const account of accounts) {
+                requests.push(token.getBalance(account));
+            }
+
+            const balancies = await Promise.all(requests);
+
+            for (const balance of balancies) {
+                tokenInfo.balance.add(new BN(balance));
+            }
+
+            tokenInfo.balance = tokenInfo.balance.toString();
         }
 
         try {
