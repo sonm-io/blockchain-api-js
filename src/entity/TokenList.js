@@ -98,10 +98,10 @@ class TokenList {
             const balancies = await Promise.all(requests);
 
             for (const balance of balancies) {
-                tokenInfo.balance.add(new BN(balance));
+                tokenInfo.balance = tokenInfo.balance.add(new BN(balance));
             }
 
-            tokenInfo.balance = tokenInfo.balance.toString();
+            tokenInfo.balance = tokenInfo.balance.toString(10);
         }
 
         try {

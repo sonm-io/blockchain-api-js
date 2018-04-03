@@ -85,6 +85,7 @@ describe('Profile entity', function () {
             const tokenInfo = await TokenList.getTokenInfo(sonmTokenAddress, vasyaCfg.address);
             expect(tokenInfo).to.have.property('name');
             expect(tokenInfo).to.have.property('balance');
+            expect(tokenInfo.balance.length).not.equal(1);
         });
 
         it('should add and remove Token', async function () {
