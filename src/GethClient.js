@@ -48,6 +48,8 @@ module.exports = class GethClient {
                 throw Error('sonmapi_node_fatal_error');
             }
         } catch(err) {
+            console.error(err.message);
+
             const error = this.errors[err.message] ? this.errors[err.message] : 'sonmapi_unknown_error';
 
             throw Error(error);
