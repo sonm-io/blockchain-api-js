@@ -3,6 +3,8 @@
 const invariant = require('fbjs/lib/invariant');
 const initContract = require('../utils/init-contract');
 const Token = require('./Token');
+const add0x = require('../utils/add-0x');
+const BN = require('ethereumjs-util').BN;
 
 class TokenList {
     constructor({gethClient}) {
@@ -21,6 +23,7 @@ class TokenList {
 
     async initSonmToken(sonmTokenAddress) {
         invariant(sonmTokenAddress, 'sonmTokenAddress is not defined');
+        invariant(sonmTokenAddress.startsWith('0x'), 'sonmTokenAddress should starts with 0x');
 
         const info = {
             address: sonmTokenAddress,
@@ -75,12 +78,34 @@ class TokenList {
         }
     }
 
-    async getTokenInfo(address) {
+    async getTokenInfo(address, accounts = null) {
         const token = new Token({gethClient: this.gethClient});
+        await token.init(address);
+
         const tokenInfo = await token.init(address);
 
+        if (accounts) {
+            if (!Array.isArray(accounts)) {
+                accounts = [accounts];
+            }
+
+            tokenInfo.balance = new BN(0);
+            const requests = [];
+            for (const account of accounts) {
+                requests.push(token.getBalance(account));
+            }
+
+            const balancies = await Promise.all(requests);
+
+            for (const balance of balancies) {
+                tokenInfo.balance = tokenInfo.balance.add(new BN(balance));
+            }
+
+            tokenInfo.balance = tokenInfo.balance.toString(10);
+        }
+
         try {
-            return token.getInfo();
+            return tokenInfo;
         } catch (err) {
             throw err;
         }

@@ -5,6 +5,7 @@ const EthereumTx = require('ethereumjs-tx');
 const TransactionResult = require('./TransactionResult');
 
 module.exports = class GethClient {
+
     constructor(url, timeout = 30000) {
         invariant(url, 'url is not defined');
 
@@ -12,6 +13,11 @@ module.exports = class GethClient {
         this.url = url;
         this.timeout = timeout;
         this.privateKey = null;
+        this.errors = {
+            'intrinsic gas too low': 'sonmapi_gas_too_low',
+            'insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
+            'Failed to fetch': 'sonmapi_network_error',
+        };
     }
 
     async call(method, params = []) {
@@ -22,23 +28,31 @@ module.exports = class GethClient {
             id: this.requestCounter++
         };
 
-        const response = await fetch(this.url, {
-            timeout: this.timeout,
-            method: 'POST',
-            body: JSON.stringify(body),
-            headers: { 'Content-Type': 'application/json' },
-        });
+        try {
+            const response = await fetch(this.url, {
+                timeout: this.timeout,
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: { 'Content-Type': 'application/json' },
+            });
 
-        if(response.status === 200) {
-            const json = await response.json();
+            if(response && response.status === 200) {
+                const json = await response.json();
 
-            if (json.error) {
-                throw Error(json.error.message);
+                if (json.error) {
+                    throw Error(json.error.message);
+                } else {
+                    return json.result;
+                }
             } else {
-                return json.result;
+                throw Error('sonmapi_node_fatal_error');
             }
-        } else {
-            throw Error('Something wrong');
+        } catch(err) {
+            console.error(err.message);
+
+            const error = this.errors[err.message] ? this.errors[err.message] : 'sonmapi_unknown_error';
+
+            throw Error(error);
         }
     }
 
