@@ -72,7 +72,6 @@ before(async function () {
 });
 
 describe('SONM entity', function () {
-    /*
     describe('utils', function () {
         this.timeout(30000);
 
@@ -180,8 +179,8 @@ describe('SONM entity', function () {
             expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
-    */
 
+    /*
     describe('deposit && withdraw', function () {
         it('should deposit VASYA', async function () {
             this.timeout(+Infinity);
@@ -230,5 +229,6 @@ describe('SONM entity', function () {
         //     }
         // });
     });
+    */
 
 });
