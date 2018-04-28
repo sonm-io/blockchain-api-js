@@ -71,7 +71,7 @@ before(async function () {
     sonmToken = tokenList.getToken(sonmTokenAddress);
 });
 
-describe('Profile entity', function () {
+describe('SONM entity', function () {
     describe('utils', function () {
         this.timeout(30000);
 
@@ -195,6 +195,9 @@ describe('Profile entity', function () {
             // const amount = 10;
             // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
             //
+            // console.log(await txResult);
+            // console.log(await txResult.getHash());
+            //
             // if (txResult) {
             //     await txResult.getReceipt();
             //
@@ -227,4 +230,5 @@ describe('Profile entity', function () {
         });
     });
     */
+
 });

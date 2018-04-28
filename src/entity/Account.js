@@ -164,8 +164,14 @@ class Account {
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
-        const allowance = await this.callContractMethod('token', 'approve', [this.contracts.gate.address, value], gasLimit, gasPrice);
-        const receipt = await allowance.getReceipt();
+        let allowance = await this.callContractMethod('token', 'approve', [this.contracts.gate.address, value], gasLimit, gasPrice);
+        let receipt = await allowance.getReceipt();
+
+        //dirty hack
+        if (receipt.status === '0x0') {
+            allowance = await this.callContractMethod('token', 'approve', [this.contracts.gate.address, 0], gasLimit, gasPrice);
+            receipt = await allowance.getReceipt();
+        }
 
         if (receipt.status === '0x1') {
             return this.callContractMethod('gate', 'PayIn', [value], gasLimit, gasPrice);
