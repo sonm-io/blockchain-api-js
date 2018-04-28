@@ -81,7 +81,7 @@ class TxResult {
         const receipt = await this.getReceipt();
         const transaction = await this.getTransaction();
 
-        return new BN(fromHex(transaction.gasPrice)).mul(new BN(fromHex(receipt.gasUsed))).toString();
+        return transaction.gasPrice ? new BN(fromHex(transaction.gasPrice)).mul(new BN(fromHex(receipt.gasUsed))).toString() : '0';
     }
 
     async getConfirmationsCount() {
