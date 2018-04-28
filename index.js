@@ -9,7 +9,7 @@ const TransactionResult = require('./src/TransactionResult');
 const config = require('./config');
 
 function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
-    const gethClient = new GethClient(remoteEthNodeUrl);
+    const gethClient = new GethClient(remoteEthNodeUrl, chainId);
     const chainConfig = config[chainId];
 
     const ctrArguments = {
@@ -32,7 +32,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
 
         const account = new Account(ctrArguments);
 
-        account.initSonmToken(chainConfig.contractAddress.token);
+        account.initContracts(chainConfig.contractAddress);
 
         return account;
     }

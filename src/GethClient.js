@@ -6,13 +6,14 @@ const TransactionResult = require('./TransactionResult');
 
 module.exports = class GethClient {
 
-    constructor(url, timeout = 30000) {
+    constructor(url, chainId, timeout = 30000) {
         invariant(url, 'url is not defined');
 
         this.requestCounter = 1;
         this.url = url;
         this.timeout = timeout;
         this.privateKey = null;
+        this.chainId = chainId;
         this.errors = {
             'intrinsic gas too low': 'sonmapi_gas_too_low',
             'insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
@@ -87,6 +88,10 @@ module.exports = class GethClient {
     }
 
     async sendTransaction(tx) {
+        if(this.chainId === 'private') {
+            tx.gasPrice = 0;
+        }
+
         const hash = await this.call('eth_sendRawTransaction', [this.getRawTransaction(tx)]);
         return new TransactionResult(hash, this, tx);
     }

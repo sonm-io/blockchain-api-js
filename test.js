@@ -15,6 +15,3 @@ const main = async() => {
 };
 
 main();
-
-e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109
-0x69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef

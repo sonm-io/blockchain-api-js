@@ -7,8 +7,9 @@ const isERC20 = require('../src/utils/check-token');
 const randomBytes = require('randombytes');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
+const URL_PRIVATE_CHAIN = 'http://159.65.167.139:8545';
 
-let VASYA, PETYA, TokenList, sonmTokenAddress;
+let VASYA, PETYA, tokenList, sonmTokenAddress, sideChainSonmToken, sonmToken;
 
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const petyaCfg = require('./data/Petya_qazwsxedc.json');
@@ -27,10 +28,12 @@ before(async function () {
 
     const vasyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
     const petyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
+    const vasyaSidechainClient = createSonmFactory(URL_PRIVATE_CHAIN, 'private');
 
     console.log('Creating test accounts...');
     VASYA = await vasyaClient.createAccount(vasyaCfg.address);
     PETYA = await petyaClient.createAccount(petyaCfg.address);
+    sidechainVASYA = await vasyaSidechainClient.createAccount(vasyaCfg.address);
     console.log('done');
 
     console.log('Get balances without privateKeys...');
@@ -44,9 +47,10 @@ before(async function () {
     console.log('Set private keys....');
     vasyaClient.setPrivateKey(vasyaPrivateKey);
     petyaClient.setPrivateKey(petyaPrivateKey);
+    vasyaSidechainClient.setPrivateKey(vasyaPrivateKey);
 
-    //console.log('Request test tokens....');
-    //await VASYA.requestTestTokens();
+    console.log('Request test tokens....');
+    await VASYA.requestTestTokens();
     //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
@@ -56,8 +60,15 @@ before(async function () {
     console.log('Sonm token address: ', sonmTokenAddress);
 
     console.log('Init token lists...');
-    TokenList = await vasyaClient.createTokenList();
+    tokenList = await vasyaClient.createTokenList();
     console.log('done');
+
+    console.log('Init sidechain token lists...');
+    sidechainTokenList = await vasyaSidechainClient.createTokenList();
+    console.log('done');
+
+    sideChainSonmToken = sidechainTokenList.getToken(vasyaSidechainClient.getSonmTokenAddress());
+    sonmToken = tokenList.getToken(sonmTokenAddress);
 });
 
 describe('Profile entity', function () {
@@ -65,9 +76,9 @@ describe('Profile entity', function () {
         this.timeout(30000);
 
         it('should get balances for eth and snmt', async function () {
-            expect(TokenList.getList().length).equal(2);
+            expect(tokenList.getList().length).equal(2);
 
-            const balances = await TokenList.getBalances(VASYA.getAddress());
+            const balances = await tokenList.getBalances(VASYA.getAddress());
             expect(balances).to.have.all.keys('0x', sonmTokenAddress);
         });
 
@@ -82,7 +93,7 @@ describe('Profile entity', function () {
         });
 
         it('should get tokenInfo with balance', async function () {
-            const tokenInfo = await TokenList.getTokenInfo(sonmTokenAddress, vasyaCfg.address);
+            const tokenInfo = await tokenList.getTokenInfo(sonmTokenAddress, vasyaCfg.address);
             expect(tokenInfo).to.have.property('name');
             expect(tokenInfo).to.have.property('balance');
             expect(tokenInfo.balance.length).not.equal(1);
@@ -91,11 +102,11 @@ describe('Profile entity', function () {
         it('should add and remove Token', async function () {
             const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
 
-            await TokenList.add(tokenAddress);
-            expect(TokenList.getList().length).equal(3);
+            await tokenList.add(tokenAddress);
+            expect(tokenList.getList().length).equal(3);
 
-            await TokenList.remove(tokenAddress);
-            expect(TokenList.getList().length).equal(2);
+            await tokenList.remove(tokenAddress);
+            expect(tokenList.getList().length).equal(2);
         });
 
         it('should generate new account and recover private key from it', async function () {
@@ -148,7 +159,7 @@ describe('Profile entity', function () {
         it('should send sonm tokens from VASYA to PETYA', async function () {
             this.timeout(+Infinity);
 
-            const sonmToken = TokenList.getToken(sonmTokenAddress);
+
             const qty = 2;
 
             const [vasyaBalance, petyaBalance] = await Promise.all([
@@ -162,10 +173,58 @@ describe('Profile entity', function () {
 
             console.log(`transaction hash ${await txResult.getHash()}`);
 
-            const receipt = await txResult.getReceipt();
+            await txResult.getReceipt();
 
             expect(await sonmToken.getBalance(VASYA.getAddress())).equal(new BN(vasyaBalance).sub(new BN(qty)).toString());
             expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
+
+    /*
+    describe('deposit && withdraw', function () {
+        it('should deposit VASYA', async function () {
+            this.timeout(+Infinity);
+            console.log(await VASYA.getTokenExchangeRate());
+
+            // const [vasyaSidechainBalance] = await Promise.all([
+            //     sideChainSonmToken.getBalance(VASYA.getAddress()),
+            // ]);
+            //
+            // console.log(vasyaSidechainBalance);
+            //
+            // const amount = 10;
+            // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
+            //
+            // if (txResult) {
+            //     await txResult.getReceipt();
+            //
+            //     const [vasyaSidechainBalance] = await Promise.all([
+            //         sideChainSonmToken.getBalance(VASYA.getAddress()),
+            //     ]);
+            //
+            //     console.log(vasyaSidechainBalance);
+            //
+            //     expect(true).equal(true);
+            // }
+        });
+
+        it('should withdraw VASYA', async function () {
+            this.timeout(+Infinity);
+
+            const [vasyaSidechainBalance] = await Promise.all([
+                sideChainSonmToken.getBalance(VASYA.getAddress()),
+            ]);
+
+            console.log(vasyaSidechainBalance);
+
+            // const amount = 10;
+            // const txResult = await sidechainVASYA.migrateToken(amount, 100000, 200000000000);
+            //
+            // if (txResult) {
+            //     await txResult.getReceipt();
+            //     expect(true).equal(true);
+            // }
+        });
+    });
+    */
 });
