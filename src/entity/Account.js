@@ -79,6 +79,17 @@ class Account {
         return (await this.contracts.oracleUSD.call('getCurrentPrice', [], this.getAddress(), gasLimit, gasPrice)).toString();
     }
 
+    async buyOrder(id = 0) {
+        //const tx = await this.callContractMethod('market', 'buyOrder', [id]);
+        //return tx.getReceipt();
+
+        // remove theee next line when market ill be ready
+        const gasLimit = toHex(await this.getGasLimit());
+        const gasPrice = toHex(await this.getGasPrice());
+
+        return (await this.contracts.market.call('GetOrdersAmount', [], this.getAddress(), gasLimit, gasPrice)).toString();
+    }
+
     async send(to, amount, tokenAddress, gasLimit, gasPrice) {
         const tx = await this.generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice);
 

@@ -185,7 +185,7 @@ describe('SONM entity', function () {
     describe('deposit && withdraw', function () {
         it('should deposit VASYA', async function () {
             this.timeout(+Infinity);
-            console.log(await VASYA.getTokenExchangeRate());
+            console.log(await sidechainVASYA.getTokenExchangeRate());
 
             const [vasyaSidechainBalance] = await Promise.all([
                 sideChainSonmToken.getBalance(VASYA.getAddress()),

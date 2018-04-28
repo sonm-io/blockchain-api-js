@@ -4,9 +4,10 @@ const invariant = require('fbjs/lib/invariant');
 const Contract = require('../entity/Contract.js');
 
 const contracts = {
-    token: require('../../contracts/SNMT.json'),
-    gate: require('../../contracts/GATE.json'),
-    oracleUSD: require('../../contracts/OracleUSD.json'),
+    token: require('../../contracts/snm.json'),
+    gate: require('../../contracts/gate.json'),
+    oracleUSD: require('../../contracts/oracleUSD.json'),
+    market: require('../../contracts/market.json'),
 };
 
 module.exports = function (name, gethClient, address) {

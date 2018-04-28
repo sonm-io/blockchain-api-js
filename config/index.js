@@ -9,7 +9,6 @@ module.exports = {
         "contractAddress": {
             "token": "0x06bda3cf79946e8b32a0bb6a3daa174b577c55b5",
             "gate": "0x8ae371b723b2e32333fcfad7733b6bbd64a4ea6f",
-            "oracleUSD": "0x1b16b3be005ace8d06df3877b6d5d6c11b3fbbbd",
         },
     },
     "testrpc": {
@@ -22,6 +21,8 @@ module.exports = {
         "contractAddress": {
             "token": "0x5db024c6469634f4b307135cb76e8e6806f007b3",
             "gate": "0x74cd6dcaae93e61964f60d63925ac3853499b654",
+            "oracleUSD": "0x81a46d5ea60ceb1b1cae6fe536e801e9eceb13db",
+            "market": "0x8ae371b723b2e32333fcfad7733b6bbd64a4ea6f",
         },
     },
 };
