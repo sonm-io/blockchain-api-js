@@ -7,7 +7,7 @@ const isERC20 = require('../src/utils/check-token');
 const randomBytes = require('randombytes');
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
-const URL_PRIVATE_CHAIN = 'http://159.65.167.139:8545';
+const URL_PRIVATE_CHAIN = 'https://sidechain-dev.sonm.com';
 
 let VASYA, PETYA, tokenList, sonmTokenAddress, sideChainSonmToken, sonmToken;
 
@@ -180,55 +180,66 @@ describe('SONM entity', function () {
         });
     });
 
-    /*
-    describe('deposit && withdraw', function () {
-        it('should deposit VASYA', async function () {
+    describe('market', function () {
+        it('should get snm token exchange rate', async function () {
             this.timeout(+Infinity);
-            console.log(await sidechainVASYA.getTokenExchangeRate());
+
+            const rate = await sidechainVASYA.getTokenExchangeRate();
 
             const [vasyaSidechainBalance] = await Promise.all([
                 sideChainSonmToken.getBalance(VASYA.getAddress()),
             ]);
 
-            console.log(vasyaSidechainBalance);
-
-            // const amount = 10;
-            // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
-            // console.log(await txResult.getHash());
-            //
-            // if (txResult) {
-            //     await txResult.getReceipt();
-            //
-            //     const [vasyaSidechainBalance] = await Promise.all([
-            //         sideChainSonmToken.getBalance(VASYA.getAddress()),
-            //     ]);
-            //
-            //     console.log(vasyaSidechainBalance);
-            //
-            //     expect(true).equal(true);
-            // }
+            expect(vasyaSidechainBalance).to.be.an('string');
+            expect(rate).to.be.an('string');
         });
 
-        // it('should withdraw VASYA', async function () {
+        // it('should buy order', async function () {
         //     this.timeout(+Infinity);
         //
-        //     const [vasyaSidechainBalance] = await Promise.all([
-        //         sideChainSonmToken.getBalance(VASYA.getAddress()),
-        //     ]);
-        //
-        //     console.log(vasyaSidechainBalance);
-        //
-        //     const amount = 10;
-        //     const txResult = await sidechainVASYA.migrateToken(amount, 100000, 200000000000);
-        //
-        //     if (txResult) {
-        //         await txResult.getReceipt();
-        //         console.log(await txResult.getTxPrice());
-        //
-        //         expect(true).equal(true);
-        //     }
+        //     // console.log(await sidechainVASYA.buyOrder(220));
+        //     // expect(true).equal(true);
         // });
     });
-    */
 
+    describe('deposit && withdraw', function () {
+        it('should deposit VASYA', async function () {
+            this.timeout(+Infinity);
+
+            // console.log(await sidechainVASYA.getTokenExchangeRate())
+            // const [vasyaSidechainBalance] = await Promise.all([
+            //     sideChainSonmToken.getBalance(VASYA.getAddress()),
+            // ]);
+            // console.log(vasyaSidechainBalance);
+
+            const amount = 10;
+            const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
+            const hash = await txResult.getHash();
+            console.log(`Transaction hash ${hash}`);
+
+            if (txResult) {
+                const receipt = await txResult.getReceipt();
+                expect(receipt.status).equal('0x1');
+            }
+        });
+
+        it('should withdraw VASYA', async function () {
+            this.timeout(+Infinity);
+
+            // const [vasyaSidechainBalance] = await Promise.all([
+            //     sideChainSonmToken.getBalance(VASYA.getAddress()),
+            // ]);
+            // console.log(vasyaSidechainBalance);
+
+            const amount = 10;
+            const txResult = await sidechainVASYA.migrateToken(amount, 100000, 200000000000);
+            const hash = await txResult.getHash();
+            console.log(`Transaction hash ${hash}`);
+
+            if (txResult) {
+                const receipt = await txResult.getReceipt();
+                expect(receipt.status).equal('0x1');
+            }
+        });
+    });
 });

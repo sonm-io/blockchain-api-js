@@ -21,8 +21,8 @@ module.exports = {
         "contractAddress": {
             "token": "0x5db024c6469634f4b307135cb76e8e6806f007b3",
             "gate": "0x74cd6dcaae93e61964f60d63925ac3853499b654",
-            "oracleUSD": "0x81a46d5ea60ceb1b1cae6fe536e801e9eceb13db",
-            "market": "0x8ae371b723b2e32333fcfad7733b6bbd64a4ea6f",
+            "oracleUSD": "0x050f19a33349885be4b46f8299b112357cc5f3f5",
+            "market": "0x9f559486d177c8b5c812081f9cd714c12f7e0260",
         },
     },
 };

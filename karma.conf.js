@@ -1,21 +1,21 @@
-module.exports = function(config) {
-  config.set({
-    browserNoActivityTimeout: 120000,
+module.exports = function (config) {
+    config.set({
+        browserNoActivityTimeout: 120000,
 
-    frameworks: [ 'browserify', 'mocha' ],
+        frameworks: ['browserify', 'mocha'],
 
-      preprocessors: {
-      'test/**/*.js': [ 'browserify' ],
-      'src/**/*.js': [ 'browserify' ],
-    },
+        preprocessors: {
+            'test/**/*.js': ['browserify'],
+            'src/**/*.js': ['browserify'],
+        },
 
-    browsers: ['Chrome'], // You may use 'ChromeCanary', 'Chromium' or any other supported browser
+        browsers: ['Chrome'], // You may use 'ChromeCanary', 'Chromium' or any other supported browser
 
-      singleRun: true,
+        singleRun: true,
 
-    files: [
-      "src/**/*.js",
-      "test/*.test.js"
-    ],
-  })
+        files: [
+            "src/**/*.js",
+            "test/*.test.js"
+        ],
+    });
 };

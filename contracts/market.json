@@ -413,6 +413,20 @@
       "constant": false,
       "inputs": [
         {
+          "name": "askID",
+          "type": "uint256"
+        }
+      ],
+      "name": "QuickBuy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "_askID",
           "type": "uint256"
         },
