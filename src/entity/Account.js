@@ -80,7 +80,7 @@ class Account {
     }
 
     async buyOrder(id = 0) {
-        const tx = await this.callContractMethod('market', 'QuickBuy', [id], 1500000);
+        const tx = await this.callContractMethod('market', 'QuickBuy', [id], 2000000);
         return tx.getReceipt();
     }
 
