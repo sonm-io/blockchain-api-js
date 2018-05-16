@@ -84,6 +84,18 @@ class Account {
         return tx.getReceipt();
     }
 
+    async closeDeal(id = 0, blackList = false) {
+        const tx = await this.callContractMethod('market', 'CloseDeal', [id, blackList], 2000000);
+        return tx.getReceipt();
+    }
+
+    async getOrderParams(id = 0) {
+        const gasLimit = toHex(await this.getGasLimit());
+        const tx = await this.contracts.market.call('GetOrderParams', [id], this.getAddress(), gasLimit);
+
+        return Object.assign({}, ...Object.keys(tx).map(item => ({[item]: tx[item].toString()})));
+    }
+
     async send(to, amount, tokenAddress, gasLimit, gasPrice) {
         const tx = await this.generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice);
         return this.gethClient.sendTransaction(tx);

@@ -31,6 +31,18 @@ class Contract {
         const response = await this.gethClient.call('eth_call', requestParams);
         const encoded = Object.values(abi.decodeMethod(this.abi[method], response));
 
+        if (this.abi[method].outputs.length === 1) {
+            return encoded[0];
+        } else {
+            const result = {};
+
+            this.abi[method].outputs.map( (item, index) => {
+                result[item.name] = encoded[index];
+            });
+
+            return result;
+        }
+
         return encoded.length === 1 ? encoded[0] : encoded;
     }
 

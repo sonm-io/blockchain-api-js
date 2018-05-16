@@ -72,6 +72,7 @@ before(async function () {
 });
 
 describe('SONM entity', function () {
+    /*
     describe('utils', function () {
         this.timeout(30000);
 
@@ -179,6 +180,7 @@ describe('SONM entity', function () {
             expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
+    */
 
     describe('market', function () {
         it('should get snm token exchange rate', async function () {
@@ -194,14 +196,29 @@ describe('SONM entity', function () {
             expect(rate).to.be.an('string');
         });
 
+        // it('should  close deal', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.closeDeal(132));
+        //     expect(true).equal(true);
+        // });
+
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
         //
-        //     // console.log(await sidechainVASYA.buyOrder(220));
-        //     // expect(true).equal(true);
+        //     console.log(await sidechainVASYA.buyOrder(450));
+        //     expect(true).equal(true);
+        // });
+        //
+        // it('should buy order', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.getOrderParams(450));
+        //     expect(true).equal(true);
         // });
     });
 
+    /*
     describe('deposit && withdraw', function () {
         it('should deposit VASYA', async function () {
             this.timeout(+Infinity);
@@ -242,4 +259,5 @@ describe('SONM entity', function () {
             }
         });
     });
+    */
 });
