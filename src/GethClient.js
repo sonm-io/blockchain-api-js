@@ -3,6 +3,7 @@ const fromHex = require('./utils/from-hex');
 const Buffer = require('buffer').Buffer;
 const EthereumTx = require('ethereumjs-tx');
 const TransactionResult = require('./TransactionResult');
+const ethUtil = require('ethereumjs-util');
 
 module.exports = class GethClient {
 
@@ -102,6 +103,17 @@ module.exports = class GethClient {
         signer.sign(privateKey);
 
         return '0x' + signer.serialize().toString('hex');
+    }
+
+    signHex(address, hex) {
+        const privateKey = Buffer.from(this.privateKey, 'hex');
+        const sign = ethUtil.ecsign(ethUtil.sha3(Buffer.from(hex)), privateKey);
+
+        if (this.chainId === 'private') {
+            sign.v++;
+        }
+
+        return `${address}/0x${sign.r.toString('hex')}${sign.s.toString('hex')}${sign.v.toString(16)}/${hex}`
     }
 
     async getNetVersion() {

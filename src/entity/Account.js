@@ -174,14 +174,14 @@ class Account {
         return await this.send(to, amount, '0x', gasLimit, gasPrice);
     }
 
-    async migrateToken(amount, gasLimit, gasPrice) {
+    async setAllowance(amount, address, gasLimit, gasPrice) {
         const value = toHex(amount);
 
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
-        let allowance = await this.callContractMethod('token', 'approve', [this.contracts.gate.address, value], gasLimit, gasPrice);
-        let receipt = await allowance.getReceipt();
+        let allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
+        let receipt = allowance.getReceipt();
 
         //dirty hack
         if (receipt.status === '0x0') {
@@ -189,10 +189,32 @@ class Account {
             receipt = await allowance.getReceipt();
         }
 
+        return receipt;
+    }
+
+    async migrateToken(amount, gasLimit, gasPrice) {
+        let receipt = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
+
+        const value = toHex(amount);
+        gasLimit = toHex(gasLimit || (await this.getGasLimit()));
+        gasPrice = toHex(gasPrice || (await this.getGasPrice()));
+
         if (receipt.status === '0x1') {
             return this.callContractMethod('gate', 'PayIn', [value], gasLimit, gasPrice);
         } else {
             return false;
+        }
+    }
+
+    async getKYCLink(amount, address, gasLimit, gasPrice) {
+        let receipt = await this.setAllowance(amount, address, gasLimit, gasPrice);
+
+        if (receipt.status === '0x1') {
+            console.log(this.gethClient.signHex(address, receipt.transactionHash));
+
+            return '';
+        } else {
+            return '';
         }
     }
 

@@ -183,18 +183,25 @@ describe('SONM entity', function () {
     */
 
     describe('market', function () {
-        it('should get snm token exchange rate', async function () {
+        it('should KYC', async function () {
             this.timeout(+Infinity);
 
-            const rate = await sidechainVASYA.getTokenExchangeRate();
-
-            const [vasyaSidechainBalance] = await Promise.all([
-                sideChainSonmToken.getBalance(VASYA.getAddress()),
-            ]);
-
-            expect(vasyaSidechainBalance).to.be.an('string');
-            expect(rate).to.be.an('string');
+            await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3');
+            expect(true).equal(true);
         });
+
+        // it('should get snm token exchange rate', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     const rate = await sidechainVASYA.getTokenExchangeRate();
+        //
+        //     const [vasyaSidechainBalance] = await Promise.all([
+        //         sideChainSonmToken.getBalance(VASYA.getAddress()),
+        //     ]);
+        //
+        //     expect(vasyaSidechainBalance).to.be.an('string');
+        //     expect(rate).to.be.an('string');
+        // });
 
         // it('should  close deal', async function () {
         //     this.timeout(+Infinity);
