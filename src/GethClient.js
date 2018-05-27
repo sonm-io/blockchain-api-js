@@ -105,15 +105,18 @@ module.exports = class GethClient {
         return '0x' + signer.serialize().toString('hex');
     }
 
-    signHex(address, hex) {
-        const privateKey = Buffer.from(this.privateKey, 'hex');
-        const sign = ethUtil.ecsign(ethUtil.sha3(Buffer.from(hex)), privateKey);
+    signMessage(message) {
+        const msg = new Buffer(message);
 
-        if (this.chainId === 'private') {
-            sign.v++;
-        }
+        const prefix = new Buffer("\x19Ethereum Signed Message:\n");
+        const prefixedMsg = ethUtil.sha3(
+            Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
+        );
 
-        return `${address}/0x${sign.r.toString('hex')}${sign.s.toString('hex')}${sign.v.toString(16)}/${hex}`
+        return {
+            sign: ethUtil.ecsign(prefixedMsg, Buffer.from(this.privateKey, 'hex')),
+            prefixedMsg,
+        };
     }
 
     async getNetVersion() {

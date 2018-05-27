@@ -210,9 +210,9 @@ class Account {
         let receipt = await this.setAllowance(amount, address, gasLimit, gasPrice);
 
         if (receipt.status === '0x1') {
-            console.log(this.gethClient.signHex(address, receipt.transactionHash));
+            const { sign, prefixedMsg } = this.gethClient.signMessage(this.getAddress(), receipt.transactionHash);
 
-            return '';
+            return `${this.getAddress()}/0x${sign.r.toString('hex')}${sign.s.toString('hex')}${sign.v.toString(16)}/0x${prefixedMsg.toString('hex')}`;
         } else {
             return '';
         }

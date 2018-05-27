@@ -186,7 +186,7 @@ describe('SONM entity', function () {
         it('should KYC', async function () {
             this.timeout(+Infinity);
 
-            await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3');
+            console.log(await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3'));
             expect(true).equal(true);
         });
 
