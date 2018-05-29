@@ -19,10 +19,10 @@ module.exports = {
     },
     "private": {
         "contractAddress": {
-            "token": "0x5db024c6469634f4b307135cb76e8e6806f007b3",
-            "gate": "0x74cd6dcaae93e61964f60d63925ac3853499b654",
-            "oracleUSD": "0x5da4a398f664bf635a70a9490d32475aea5ea0b0",
-            "market": "0x925d92c0d057275520a19672787d648d7f6125a9",
+            "token": "0x26524b1234e361eb4e3ddf7600d41271620fcb0a",
+            "gate": "0x9414922e778a0038058e9ea786e9474a89ad1ec0",
+            "oracleUSD": "0x1f995e52dcbec7c0d00d45b8b1bf43b29dd12b5b",
+            "market": "0x861e35a0d64736cb1bcaeaa84777fec0a4eff06a",
         },
     },
 };
