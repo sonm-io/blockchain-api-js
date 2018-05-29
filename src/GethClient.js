@@ -106,17 +106,7 @@ module.exports = class GethClient {
     }
 
     signMessage(message) {
-        const msg = new Buffer(message);
-
-        const prefix = new Buffer("\x19Ethereum Signed Message:\n");
-        const prefixedMsg = ethUtil.sha3(
-            Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
-        );
-
-        return {
-            sign: ethUtil.ecsign(prefixedMsg, Buffer.from(this.privateKey, 'hex')),
-            prefixedMsg,
-        };
+        return ethUtil.ecsign(Buffer.from(message.substr(2), 'hex'), Buffer.from(this.privateKey, 'hex'));
     }
 
     async getNetVersion() {
