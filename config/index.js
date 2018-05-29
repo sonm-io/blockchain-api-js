@@ -8,7 +8,7 @@ module.exports = {
     "rinkeby": {
         "contractAddress": {
             "token": "0x06bda3cf79946e8b32a0bb6a3daa174b577c55b5",
-            "gate": "0x8ae371b723b2e32333fcfad7733b6bbd64a4ea6f",
+            "gate": "0xbc29310be3693949094ce452b11829dbccca7d49",
         },
     },
     "testrpc": {
