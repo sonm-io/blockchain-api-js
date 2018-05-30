@@ -50,7 +50,7 @@ before(async function () {
     vasyaSidechainClient.setPrivateKey(vasyaPrivateKey);
 
     console.log('Request test tokens....');
-    await VASYA.requestTestTokens();
+    //await VASYA.requestTestTokens();
     //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
@@ -203,17 +203,16 @@ describe('SONM entity', function () {
         //     expect(rate).to.be.an('string');
         // });
 
-        it('should  close deal', async function () {
-            this.timeout(+Infinity);
-
-            console.log(await sidechainVASYA.closeDeal(406));
-            expect(true).equal(true);
-        });
-
+        // it('should  close deal', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.closeDeal(406));
+        //     expect(true).equal(true);
+        // });
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
         //
-        //     console.log(await sidechainVASYA.buyOrder(450));
+        //     console.log(await sidechainVASYA.buyOrder(208));
         //     expect(true).equal(true);
         // });
         //

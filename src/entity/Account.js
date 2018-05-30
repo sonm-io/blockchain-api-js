@@ -69,7 +69,8 @@ class Account {
         const gasLimit = toHex(await this.getGasLimit());
         const gasPrice = toHex(await this.getGasPrice());
 
-        return await this.contracts.token.call('getTokens', [], this.getAddress(), gasLimit, gasPrice);
+        const tx = await this.callContractMethod('token', 'getTokens', [], gasLimit, gasPrice);
+        return tx.getReceipt();
     }
 
     async getTokenExchangeRate() {
@@ -80,7 +81,7 @@ class Account {
     }
 
     async buyOrder(id = 0) {
-        const tx = await this.callContractMethod('market', 'QuickBuy', [id], 2000000);
+        const tx = await this.callContractMethod('market', 'QuickBuy', [id], 4000000);
         return tx.getReceipt();
     }
 
@@ -120,6 +121,8 @@ class Account {
         };
 
         this.nonce++;
+
+        console.log(tx);
 
         return this.gethClient.sendTransaction(tx);
     }

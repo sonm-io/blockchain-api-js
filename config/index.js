@@ -22,7 +22,7 @@ module.exports = {
             "token": "0x26524b1234e361eb4e3ddf7600d41271620fcb0a",
             "gate": "0x9414922e778a0038058e9ea786e9474a89ad1ec0",
             "oracleUSD": "0x1f995e52dcbec7c0d00d45b8b1bf43b29dd12b5b",
-            "market": "0x861e35a0d64736cb1bcaeaa84777fec0a4eff06a",
+            "market": "0x51a1d1d1821b4109eb84edc4ca8ec814b1fe9876",
         },
     },
 };
