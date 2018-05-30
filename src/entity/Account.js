@@ -122,8 +122,6 @@ class Account {
 
         this.nonce++;
 
-        console.log(tx);
-
         return this.gethClient.sendTransaction(tx);
     }
 
