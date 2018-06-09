@@ -50,7 +50,7 @@ before(async function () {
     vasyaSidechainClient.setPrivateKey(vasyaPrivateKey);
 
     console.log('Request test tokens....');
-    //await VASYA.requestTestTokens();
+    await VASYA.requestTestTokens();
     //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
@@ -155,32 +155,33 @@ describe('SONM entity', function () {
             expect(newPetyaBalance.toString()).equal(new BN(petyaBalance).add(new BN(qty)).toString());
         });
     });
-
-    describe('tokens', function () {
-        it('should send sonm tokens from VASYA to PETYA', async function () {
-            this.timeout(+Infinity);
-
-
-            const qty = 2;
-
-            const [vasyaBalance, petyaBalance] = await Promise.all([
-                sonmToken.getBalance(VASYA.getAddress()),
-                sonmToken.getBalance(PETYA.getAddress()),
-            ]);
-
-            console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
-
-            const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, sonmTokenAddress, 1000001, 200000000000);
-
-            console.log(`transaction hash ${await txResult.getHash()}`);
-
-            await txResult.getReceipt();
-
-            expect(await sonmToken.getBalance(VASYA.getAddress())).equal(new BN(vasyaBalance).sub(new BN(qty)).toString());
-            expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
-        });
-    });
     */
+
+    // describe('tokens', function () {
+    //     it('should send sonm tokens from VASYA to PETYA', async function () {
+    //         this.timeout(+Infinity);
+    //
+    //
+    //         const qty = 2;
+    //
+    //         const [vasyaBalance, petyaBalance] = await Promise.all([
+    //             sonmToken.getBalance(VASYA.getAddress()),
+    //             sonmToken.getBalance(PETYA.getAddress()),
+    //         ]);
+    //
+    //         console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
+    //
+    //         const txResult = await VASYA.sendTokens(PETYA.getAddress(), qty, sonmTokenAddress, 1000001, 200000000000);
+    //
+    //         console.log(`transaction hash ${await txResult.getHash()}`);
+    //
+    //         await txResult.getReceipt();
+    //
+    //         expect(await sonmToken.getBalance(VASYA.getAddress())).equal(new BN(vasyaBalance).sub(new BN(qty)).toString());
+    //         expect(await sonmToken.getBalance(PETYA.getAddress())).equal(new BN(petyaBalance).add(new BN(qty)).toString());
+    //     });
+    // });
+
 
     describe('market', function () {
         it('should KYC', async function () {
