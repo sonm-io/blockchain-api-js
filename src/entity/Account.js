@@ -176,30 +176,33 @@ class Account {
     }
 
     async setAllowance(amount, address, gasLimit, gasPrice) {
-        const value = toHex(amount);
+        let receipt;
+        let allowance;
 
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
-        let allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
-        let receipt = allowance.getReceipt();
+        const existsAllowance = (await this.contracts.token.call('allowance', [this.getAddress(), address], this.getAddress(), gasLimit, gasPrice)).toString();
+        const value = toHex(amount);
 
-        //dirty hack
-        if (receipt.status === '0x0') {
-            allowance = await this.callContractMethod('token', 'approve', [this.contracts.gate.address, 0], gasLimit, gasPrice);
+        //reset allowance
+        if (existsAllowance !== '0') {
+            allowance = await this.callContractMethod('token', 'approve', [address, 0], gasLimit, gasPrice);
             receipt = await allowance.getReceipt();
         }
+
+        allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
+        receipt = await allowance.getReceipt();
 
         return receipt;
     }
 
     async migrateToken(amount, gasLimit, gasPrice) {
-        let receipt = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
-
         const value = toHex(amount);
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
+        let receipt = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
         if (receipt.status === '0x1') {
             return this.callContractMethod('gate', 'PayIn', [value], gasLimit, gasPrice);
         } else {
