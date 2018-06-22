@@ -8,9 +8,9 @@ const TransactionResult = require('./src/TransactionResult');
 
 const config = require('./config');
 
-function createSonmFactory(remoteEthNodeUrl, chainId = 'live', params = {}) {
+function createSonmFactory(remoteEthNodeUrl, chainId = 'live', private = false, params = {}) {
     const gethClient = new GethClient(remoteEthNodeUrl, chainId);
-    const chainConfig = config[chainId];
+    const chainConfig = config[chainId + (private ? '_private' : '')];
 
     const ctrArguments = {
         gethClient,

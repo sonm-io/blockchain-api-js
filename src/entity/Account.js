@@ -90,6 +90,11 @@ class Account {
         return tx.getReceipt();
     }
 
+    async confirmWorker(slaveId = '') {
+        const tx = await this.callContractMethod('market', 'ConfirmWorker', [slaveId], 2000000);
+        return tx.getReceipt();
+    }
+
     async getOrderParams(id = 0) {
         const gasLimit = toHex(await this.getGasLimit());
         const tx = await this.contracts.market.call('GetOrderParams', [id], this.getAddress(), gasLimit);

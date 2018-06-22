@@ -28,7 +28,7 @@ before(async function () {
 
     const vasyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
     const petyaClient = createSonmFactory(URL_REMOTE_GETH_NODE, 'rinkeby');
-    const vasyaSidechainClient = createSonmFactory(URL_PRIVATE_CHAIN, 'private');
+    const vasyaSidechainClient = createSonmFactory(URL_PRIVATE_CHAIN, 'rinkeby', true);
 
     console.log('Creating test accounts...');
     VASYA = await vasyaClient.createAccount(vasyaCfg.address);
@@ -184,10 +184,17 @@ describe('SONM entity', function () {
 
 
     describe('market', function () {
-        it('should KYC', async function () {
+        // it('should KYC', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3'));
+        //     expect(true).equal(true);
+        // });
+
+        it('should confirm worker', async function () {
             this.timeout(+Infinity);
 
-            console.log(await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3'));
+            console.log(await sidechainVASYA.confirmWorker('0xC0bC7A51b0dCcf9BC54F1f97CaDA2BA734dBe777'));
             expect(true).equal(true);
         });
 
