@@ -89,7 +89,7 @@ class Account {
     }
 
     async closeDeal(id = 0, blackList = false) {
-        const tx = await this.callContractMethod('market', 'CloseDeal', [id, blackList], 2000000);
+        const tx = await this.callContractMethod('market', 'CloseDeal', [id, blackList ? 1 : 0], 2000000);
         return tx.getReceipt();
     }
 

@@ -209,19 +209,19 @@ describe('SONM entity', function () {
         //     expect(rate).to.be.an('string');
         // });
 
-        // it('should  close deal', async function () {
-        //     this.timeout(+Infinity);
-        //
-        //     console.log(await sidechainVASYA.closeDeal(406));
-        //     expect(true).equal(true);
-        // });
-
-        it('should buy order', async function () {
+        it('should  close deal', async function () {
             this.timeout(+Infinity);
 
-            console.log(await sidechainVASYA.buyOrder(101));
+            console.log(await sidechainVASYA.closeDeal(8));
             expect(true).equal(true);
         });
+
+        // it('should buy order', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.buyOrder(101));
+        //     expect(true).equal(true);
+        // });
         //
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
