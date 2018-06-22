@@ -69,6 +69,38 @@
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
       "inputs": [],
       "name": "owner",
@@ -176,6 +208,10 @@
         {
           "name": "_benchmarksQuantity",
           "type": "uint256"
+        },
+        {
+          "name": "_netflagsQuantity",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -234,12 +270,12 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "name": "dealID",
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "name": "paidAmount",
           "type": "uint256"
         }
@@ -327,6 +363,42 @@
       "inputs": [
         {
           "indexed": true,
+          "name": "newNum",
+          "type": "uint256"
+        }
+      ],
+      "name": "NumBenchmarksUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "newNum",
+          "type": "uint256"
+        }
+      ],
+      "name": "NumNetflagsUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Pause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Unpause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "name": "previousOwner",
           "type": "address"
         },
@@ -360,7 +432,7 @@
         },
         {
           "name": "_netflags",
-          "type": "bool[3]"
+          "type": "bool[]"
         },
         {
           "name": "_identityLevel",
@@ -415,6 +487,10 @@
         {
           "name": "askID",
           "type": "uint256"
+        },
+        {
+          "name": "buyoutDuration",
+          "type": "uint256"
         }
       ],
       "name": "QuickBuy",
@@ -450,7 +526,7 @@
         },
         {
           "name": "blacklisted",
-          "type": "bool"
+          "type": "uint8"
         }
       ],
       "name": "CloseDeal",
@@ -622,7 +698,7 @@
         },
         {
           "name": "netflags",
-          "type": "bool[3]"
+          "type": "bool[]"
         },
         {
           "name": "identityLevel",
@@ -855,6 +931,34 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [],
+      "name": "GetBenchmarksQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetNetflagsQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -900,7 +1004,45 @@
           "type": "address"
         }
       ],
-      "name": "SetOracleAdress",
+      "name": "SetOracleAddress",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newQuantity",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetBenchmarksQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newQuantity",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetNetflagsQuantity",
       "outputs": [
         {
           "name": "",

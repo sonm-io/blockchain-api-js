@@ -8,6 +8,7 @@ const initContract = require('../utils/init-contract');
 
 const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = '100000000000';
+const MAX_ALLOWANCE = '440000000000000000000000000';
 
 class Account {
     constructor({gethClient, address0x, sonmTokenAddress, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
@@ -80,8 +81,10 @@ class Account {
         return (await this.contracts.oracleUSD.call('getCurrentPrice', [], this.getAddress(), gasLimit, gasPrice)).toString();
     }
 
-    async buyOrder(id = 0) {
-        const tx = await this.callContractMethod('market', 'QuickBuy', [id], 4000000);
+    async buyOrder(id = 0, duration = 0) {
+        await this.setAllowanceForMarket();
+
+        const tx = await this.callContractMethod('market', 'QuickBuy', [id, duration], 4000000);
         return tx.getReceipt();
     }
 
@@ -93,6 +96,10 @@ class Account {
     async confirmWorker(slaveId = '') {
         const tx = await this.callContractMethod('market', 'ConfirmWorker', [slaveId], 2000000);
         return tx.getReceipt();
+    }
+
+    async setAllowanceForMarket() {
+        await this.setAllowance(MAX_ALLOWANCE, this.contracts.market.address);
     }
 
     async getOrderParams(id = 0) {

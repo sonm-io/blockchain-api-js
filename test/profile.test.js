@@ -190,14 +190,12 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3'));
         //     expect(true).equal(true);
         // });
-
-        it('should confirm worker', async function () {
-            this.timeout(+Infinity);
-
-            console.log(await sidechainVASYA.confirmWorker('0xC0bC7A51b0dCcf9BC54F1f97CaDA2BA734dBe777'));
-            expect(true).equal(true);
-        });
-
+        // it('should confirm worker', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.confirmWorker('0xC0bC7A51b0dCcf9BC54F1f97CaDA2BA734dBe777'));
+        //     expect(true).equal(true);
+        // });
         // it('should get snm token exchange rate', async function () {
         //     this.timeout(+Infinity);
         //
@@ -217,12 +215,13 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.closeDeal(406));
         //     expect(true).equal(true);
         // });
-        // it('should buy order', async function () {
-        //     this.timeout(+Infinity);
-        //
-        //     console.log(await sidechainVASYA.buyOrder(208));
-        //     expect(true).equal(true);
-        // });
+
+        it('should buy order', async function () {
+            this.timeout(+Infinity);
+
+            console.log(await sidechainVASYA.buyOrder(101));
+            expect(true).equal(true);
+        });
         //
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
