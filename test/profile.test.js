@@ -37,7 +37,7 @@ before(async function () {
     console.log('done');
 
     console.log('Get balances without privateKeys...');
-    const [vasyaBalance, petyaBalance] = await Promise.all([
+    let [vasyaBalance, petyaBalance] = await Promise.all([
         VASYA.getBalance(),
         PETYA.getBalance(),
     ]);
@@ -48,10 +48,6 @@ before(async function () {
     vasyaClient.setPrivateKey(vasyaPrivateKey);
     petyaClient.setPrivateKey(petyaPrivateKey);
     vasyaSidechainClient.setPrivateKey(vasyaPrivateKey);
-
-    //console.log('Request test tokens....');
-    //await VASYA.requestTestTokens();
-    //await PETYA.requestTestTokens();
 
     const gasPrice = await vasyaClient.gethClient.getGasPrice();
     console.log('Gas price: ', gasPrice);
@@ -69,6 +65,16 @@ before(async function () {
 
     sideChainSonmToken = sidechainTokenList.getToken(vasyaSidechainClient.getSonmTokenAddress());
     sonmToken = tokenList.getToken(sonmTokenAddress);
+
+    [vasyaBalance, petyaBalance] = await Promise.all([
+        sonmToken.getBalance(VASYA.getAddress()),
+        sonmToken.getBalance(PETYA.getAddress()),
+    ]);
+
+    console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
+    console.log('Request test tokens....');
+    //await VASYA.requestTestTokens();
+    //await PETYA.requestTestTokens();
 });
 
 describe('SONM entity', function () {
@@ -209,12 +215,12 @@ describe('SONM entity', function () {
         //     expect(rate).to.be.an('string');
         // });
 
-        it('should  close deal', async function () {
-            this.timeout(+Infinity);
-
-            console.log(await sidechainVASYA.closeDeal(8));
-            expect(true).equal(true);
-        });
+        // it('should  close deal', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.closeDeal(8));
+        //     expect(true).equal(true);
+        // });
 
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
@@ -245,7 +251,6 @@ describe('SONM entity', function () {
             // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
             // const hash = await txResult.getHash();
             // console.log(`Transaction hash ${hash}`);
-            //
             // if (txResult) {
             //     const receipt = await txResult.getReceipt();
             //     expect(receipt.status).equal('0x1');

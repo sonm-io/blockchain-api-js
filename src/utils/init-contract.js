@@ -8,6 +8,7 @@ const contracts = {
     gate: require('../../contracts/gate.json'),
     oracleUSD: require('../../contracts/oracleUSD.json'),
     market: require('../../contracts/market.json'),
+    faucet: require('../../contracts/snm.json'),
 };
 
 module.exports = function (name, gethClient, address) {

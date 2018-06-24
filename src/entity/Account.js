@@ -70,7 +70,7 @@ class Account {
         const gasLimit = toHex(await this.getGasLimit());
         const gasPrice = toHex(await this.getGasPrice());
 
-        const tx = await this.callContractMethod('token', 'getTokens', [], gasLimit, gasPrice);
+        const tx = await this.callContractMethod('faucet', 'getTokens', [], gasLimit, gasPrice);
         return tx.getReceipt();
     }
 
