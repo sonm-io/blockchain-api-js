@@ -7,7 +7,7 @@ const ethUtil = require('ethereumjs-util');
 
 module.exports = class GethClient {
 
-    constructor(url, chainId, timeout = 30000) {
+    constructor(url, chainId, privateChain = false, timeout = 30000) {
         invariant(url, 'url is not defined');
 
         this.requestCounter = 1;
@@ -15,6 +15,7 @@ module.exports = class GethClient {
         this.timeout = timeout;
         this.privateKey = null;
         this.chainId = chainId;
+        this.privateChain = privateChain;
         this.errors = {
             'intrinsic gas too low': 'sonmapi_gas_too_low',
             'insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
@@ -89,7 +90,7 @@ module.exports = class GethClient {
     }
 
     async sendTransaction(tx) {
-        if(this.chainId === 'private') {
+        if(this.privateChain) {
             tx.gasPrice = 0;
         }
 
