@@ -216,7 +216,7 @@ class Account {
 
         let receipt = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
         if (receipt.status === '0x1') {
-            return this.callContractMethod('gate', 'PayIn', [value], gasLimit, gasPrice);
+            return this.callContractMethod('gate', 'Payin', [value], gasLimit, gasPrice);
         } else {
             return false;
         }

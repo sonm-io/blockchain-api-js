@@ -2,15 +2,15 @@ module.exports = {
     "livenet": {
         "contractAddress": {
             "token": "0x983F6d60db79ea8cA4eB9968C6aFf8cfA04B3c63",
-            "gate": "0xa6Cc80aB43130737A9761881e60B07365ba3920a",
+            "gate": "0x125f1e37a45abf9b9894aefcb03d14d170d1489b",
         },
     },
     "livenet_private": {
         "contractAddress": {
-            "token": "0x85fCEFb4403483040E25a66b711461559D89B9cE",
-            "gate": "0x5B32AcF076dE5Cd487b0c20383D02612be27b914",
-            "oracleUSD": "0x676D9fa58D5500d72DC108128517000B2607791B",
-            "market": "0x4B660A6dB90275fDcB1155AF43CCF0b8635a8BB3",
+            "token": "0x23e808e6ef115832f79bf38ab317fe49e981add3",
+            "gate": "0x1925b47c97c846d6ac31b31ae7a505e39ec56a69",
+            "oracleUSD": "0x5dfdf389afca3eff479686a8a141ebcc74151434",
+            "market": "0x6c88e07debd749476636ac4841063130df6c62bf",
         },
     },
     "rinkeby": {
