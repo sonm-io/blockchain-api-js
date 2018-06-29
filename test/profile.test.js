@@ -257,23 +257,23 @@ describe('SONM entity', function () {
         //     // }
         // });
 
-        it('should withdraw VASYA', async function () {
-            this.timeout(+Infinity);
-
-            const [vasyaSidechainBalance] = await Promise.all([
-                sideChainSonmToken.getBalance(VASYA.getAddress()),
-            ]);
-            console.log(vasyaSidechainBalance);
-
-            const amount = 10;
-            const txResult = await sidechainVASYA.migrateToken(amount, 100000, 200000000000);
-            const hash = await txResult.getHash();
-            console.log(`Transaction hash ${hash}`);
-
-            if (txResult) {
-                const receipt = await txResult.getReceipt();
-                expect(receipt.status).equal('0x1');
-            }
-        });
+        // it('should withdraw VASYA', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     const [vasyaSidechainBalance] = await Promise.all([
+        //         sideChainSonmToken.getBalance(VASYA.getAddress()),
+        //     ]);
+        //     console.log(vasyaSidechainBalance);
+        //
+        //     const amount = 10;
+        //     const txResult = await sidechainVASYA.migrateToken(amount, 100000, 200000000000);
+        //     const hash = await txResult.getHash();
+        //     console.log(`Transaction hash ${hash}`);
+        //
+        //     if (txResult) {
+        //         const receipt = await txResult.getReceipt();
+        //         expect(receipt.status).equal('0x1');
+        //     }
+        // });
     });
 });
