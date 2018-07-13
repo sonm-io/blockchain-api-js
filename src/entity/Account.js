@@ -188,23 +188,24 @@ class Account {
     }
 
     async setAllowance(amount, address, gasLimit, gasPrice) {
-        let receipt;
-        let allowance;
-
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
-        const existsAllowance = (await this.contracts.token.call('allowance', [this.getAddress(), address], this.getAddress(), gasLimit, gasPrice)).toString();
+        const existsAllowance = await this.contracts.token.call('allowance', [this.getAddress(), address], this.getAddress(), gasLimit, gasPrice);
         const value = toHex(amount);
 
         //reset allowance
-        if (existsAllowance !== '0') {
-            allowance = await this.callContractMethod('token', 'approve', [address, 0], gasLimit, gasPrice);
-            receipt = await allowance.getReceipt();
-        }
+        if (existsAllowance.lt(new BN(amount))) {
+            let allowance = await this.callContractMethod('token', 'approve', [address, 0], gasLimit, gasPrice);
+            let receipt = await allowance.getReceipt();
 
-        allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
-        receipt = await allowance.getReceipt();
+            allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
+            receipt = await allowance.getReceipt();
+
+            return receipt.status === '0x1';
+        } else {
+            return true;
+        }
 
         return receipt;
     }
@@ -214,8 +215,8 @@ class Account {
         gasLimit = toHex(gasLimit || (await this.getGasLimit()));
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
-        let receipt = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
-        if (receipt.status === '0x1') {
+        let result = await this.setAllowance(amount, this.contracts.gate.address, gasLimit, gasPrice);
+        if (result) {
             return this.callContractMethod('gate', 'Payin', [value], gasLimit, gasPrice);
         } else {
             return false;

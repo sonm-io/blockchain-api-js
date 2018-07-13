@@ -5,20 +5,32 @@ const GethClient = require('./src/GethClient');
 const recoverPrivateKey = require('./src/utils/recover-private-key.js');
 const newAccount = require('./src/utils/new-account.js');
 const TransactionResult = require('./src/TransactionResult');
+const initContract = require('./src/utils/init-contract.js');
+const toHex = require('./src/utils/to-hex');
 
 const config = require('./config');
 
+const KEYS = {
+    mainchain: {
+        token: 'masterchainSNMAddress',
+        market: 'marketAddress',
+        gate: 'gatekeeperMasterchainAddress',
+        oracleUSD: 'oracleUsdAddress',
+        faucet: 'testnetFauсetAddress',
+    },
+    sidechain: {
+        token: 'sidechainSNMAddress',
+        market: 'marketAddress',
+        gate: 'gatekeeperSidechainAddress',
+        oracleUSD: 'oracleUsdAddress',
+        faucet: 'testnetFauсetAddress',
+    }
+};
+
 function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = false, params = {}) {
+    const chainKey = chainId + (privateChain ? '_private' : '');
+    const chainConfig = config[chainKey];
     const gethClient = new GethClient(remoteEthNodeUrl, chainId, privateChain);
-    const chainConfig = config[chainId + (privateChain ? '_private' : '')];
-
-    const ctrArguments = {
-        gethClient,
-        config: chainConfig,
-        sonmTokenAddress: chainConfig.contractAddress.token,
-    };
-
-    Object.assign(ctrArguments, params);
 
     /**
      * create API entity Account
@@ -28,7 +40,21 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = fa
      */
     async function createAccount(address) {
         const address0x = add0x(address);
-        ctrArguments.address0x = address0x;
+        const addressRegistry = initContract('addressRegistry', new GethClient(config[`${chainId}_private`].url, chainId, true), config[`${chainId}_private`].contractAddress.addressRegistry);
+        const keys = privateChain ? KEYS.sidechain : KEYS.mainchain;
+
+        for (const key in keys) {
+            chainConfig.contractAddress[key] = await addressRegistry.call('read', [Buffer.from(keys[key])], address0x, toHex(1000000));
+        }
+
+        const ctrArguments = {
+            gethClient,
+            config: chainConfig,
+            sonmTokenAddress: chainConfig.contractAddress.token,
+            address0x,
+        };
+
+        Object.assign(ctrArguments, params);
 
         const account = new Account(ctrArguments);
 
