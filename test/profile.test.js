@@ -72,7 +72,7 @@ before(async function () {
     ]);
 
     console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
-    console.log('Request test tokens....');
+    //console.log('Request test tokens....');
     //await VASYA.requestTestTokens();
     //await PETYA.requestTestTokens();
 });
@@ -221,6 +221,13 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.closeDeal(8));
         //     expect(true).equal(true);
         // });
+
+        it('should create change request', async function () {
+            this.timeout(+Infinity);
+
+            console.log(await sidechainVASYA.createChangeRequest(159, '444444444', 0));
+            expect(true).equal(true);
+        });
 
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
