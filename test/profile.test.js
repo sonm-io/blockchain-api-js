@@ -73,8 +73,7 @@ before(async function () {
 
     console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
     //console.log('Request test tokens....');
-    //const a = await VASYA.requestTestTokens();
-    //console.log(a);
+    //await VASYA.requestTestTokens();
     //await PETYA.requestTestTokens();
 });
 
@@ -222,6 +221,21 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.closeDeal(8));
         //     expect(true).equal(true);
         // });
+        //
+
+        // it('should create change request', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     console.log(await sidechainVASYA.createChangeRequest(160, '52777777777777', 0));
+        //     expect(true).equal(true);
+        // });
+
+        it('should cancel change request', async function () {
+            this.timeout(+Infinity);
+
+            console.log(await sidechainVASYA.cancelChangeRequest(51));
+            expect(true).equal(true);
+        });
 
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
@@ -239,24 +253,24 @@ describe('SONM entity', function () {
     });
 
     describe('deposit && withdraw', function () {
-        it('should deposit VASYA', async function () {
-            this.timeout(+Infinity);
-
-            //console.log(await sidechainVASYA.getTokenExchangeRate());
-            const [vasyaSidechainBalance] = await Promise.all([
-                sideChainSonmToken.getBalance(VASYA.getAddress()),
-            ]);
-            console.log(vasyaSidechainBalance);
-
-            // const amount = 10;
-            // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
-            // const hash = await txResult.getHash();
-            // console.log(`Transaction hash ${hash}`);
-            // if (txResult) {
-            //     const receipt = await txResult.getReceipt();
-            //     expect(receipt.status).equal('0x1');
-            // }
-        });
+        // it('should deposit VASYA', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     //console.log(await sidechainVASYA.getTokenExchangeRate());
+        //     const [vasyaSidechainBalance] = await Promise.all([
+        //         sideChainSonmToken.getBalance(VASYA.getAddress()),
+        //     ]);
+        //     console.log(vasyaSidechainBalance);
+        //
+        //     // const amount = 10;
+        //     // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
+        //     // const hash = await txResult.getHash();
+        //     // console.log(`Transaction hash ${hash}`);
+        //     // if (txResult) {
+        //     //     const receipt = await txResult.getReceipt();
+        //     //     expect(receipt.status).equal('0x1');
+        //     // }
+        // });
 
         // it('should withdraw VASYA', async function () {
         //     this.timeout(+Infinity);

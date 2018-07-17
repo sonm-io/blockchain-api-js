@@ -93,6 +93,16 @@ class Account {
         return tx.getReceipt();
     }
 
+    async createChangeRequest(id = 0, newPrice, newDuration) {
+        const tx = await this.callContractMethod('market', 'CreateChangeRequest', [id, newPrice, newDuration], 2000000);
+        return tx.getReceipt();
+    }
+
+    async cancelChangeRequest(id = 0) {
+        const tx = await this.callContractMethod('market', 'CancelChangeRequest', [id], 2000000);
+        return tx.getReceipt();
+    }
+
     async confirmWorker(slaveId = '') {
         const tx = await this.callContractMethod('market', 'ConfirmWorker', [slaveId], 2000000);
         return tx.getReceipt();
