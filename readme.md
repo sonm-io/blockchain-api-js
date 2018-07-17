@@ -1,1 +1,1 @@
-Cool tools for SONM Wallet
+Cool tools for SONM GUI
