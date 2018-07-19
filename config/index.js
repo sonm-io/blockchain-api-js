@@ -20,10 +20,13 @@ module.exports = {
         },
     },
     testrpc: {
-        url: 'http://localhost:8545',
+        url: 'https://proxy.test.sonm.com:8545',
+        contractAddress: {},
+    },
+    testrpc_private: {
+        url: 'https://proxy.test.sonm.com:8546',
         contractAddress: {
-            token: '0xb29d1e8259571de17429b771ca455210f25b9fce',
-            gate: '0x81a46d5ea60ceb1b1cae6fe536e801e9eceb13db',
+            addressRegistry: '0x4b90dff4de1eb5a8581f3200bd5956c9b8dd6346',
         },
     },
 };
