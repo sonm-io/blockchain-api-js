@@ -39,14 +39,9 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = fa
      * @param {string} privateKey
      */
     async function createAccount(address) {
+        await getAddresses();
+
         const address0x = add0x(address);
-        const addressRegistry = initContract('addressRegistry', new GethClient(config[`${chainId}_private`].url, chainId, true), config[`${chainId}_private`].contractAddress.addressRegistry);
-        const keys = privateChain ? KEYS.sidechain : KEYS.mainchain;
-
-        for (const key in keys) {
-            chainConfig.contractAddress[key] = await addressRegistry.call('read', [Buffer.from(keys[key])], address0x, toHex(1000000));
-        }
-
         const ctrArguments = {
             gethClient,
             config: chainConfig,
@@ -76,6 +71,8 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = fa
     }
 
     async function createTokenList() {
+        await getAddresses();
+
         const tokenList = new TokenList({
             gethClient,
         });
@@ -83,6 +80,17 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = fa
         await tokenList.initSonmToken(chainConfig.contractAddress.token);
 
         return tokenList;
+    }
+
+    async function getAddresses() {
+        if (Object.keys(chainConfig.contractAddress).length <= 1) {
+            const addressRegistry = initContract('addressRegistry', new GethClient(config[`${chainId}_private`].url, chainId, true), config[`${chainId}_private`].contractAddress.addressRegistry);
+            const keys = privateChain ? KEYS.sidechain : KEYS.mainchain;
+
+            for (const key in keys) {
+                chainConfig.contractAddress[key] = await addressRegistry.call('read', [Buffer.from(keys[key])], '0x' + Array(41).join('0'), toHex(1000000));
+            }
+        }
     }
 
     return {
