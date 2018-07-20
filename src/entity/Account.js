@@ -216,8 +216,6 @@ class Account {
         } else {
             return true;
         }
-
-        return receipt;
     }
 
     async migrateToken(amount, gasLimit, gasPrice) {

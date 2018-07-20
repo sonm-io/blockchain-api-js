@@ -196,12 +196,14 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.getKYCLink(100, '0x5db024c6469634f4b307135cb76e8e6806f007b3'));
         //     expect(true).equal(true);
         // });
+
         // it('should confirm worker', async function () {
         //     this.timeout(+Infinity);
         //
-        //     console.log(await sidechainVASYA.confirmWorker('0xC0bC7A51b0dCcf9BC54F1f97CaDA2BA734dBe777'));
+        //     console.log(await sidechainVASYA.confirmWorker('0x84c3D6aaf69f44cb29341827946Af4E7015253d9'));
         //     expect(true).equal(true);
         // });
+
         // it('should get snm token exchange rate', async function () {
         //     this.timeout(+Infinity);
         //
@@ -214,7 +216,6 @@ describe('SONM entity', function () {
         //     expect(vasyaSidechainBalance).to.be.an('string');
         //     expect(rate).to.be.an('string');
         // });
-
         // it('should  close deal', async function () {
         //     this.timeout(+Infinity);
         //
@@ -226,7 +227,7 @@ describe('SONM entity', function () {
         it('should create change request', async function () {
             this.timeout(+Infinity);
 
-            console.log(await sidechainVASYA.createChangeRequest(168, '82777777777777', 0));
+            console.log(await sidechainVASYA.createChangeRequest(4, 0, 76400));
             expect(true).equal(true);
         });
 
@@ -236,11 +237,10 @@ describe('SONM entity', function () {
         //     console.log(await sidechainVASYA.cancelChangeRequest(51));
         //     expect(true).equal(true);
         // });
-
         // it('should buy order', async function () {
         //     this.timeout(+Infinity);
         //
-        //     console.log(await sidechainVASYA.buyOrder(101));
+        //     console.log(await sidechainVASYA.buyOrder(9, 86400));
         //     expect(true).equal(true);
         // });
         //
@@ -262,14 +262,14 @@ describe('SONM entity', function () {
         //     ]);
         //     console.log(vasyaSidechainBalance);
         //
-        //     // const amount = 10;
-        //     // const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
-        //     // const hash = await txResult.getHash();
-        //     // console.log(`Transaction hash ${hash}`);
-        //     // if (txResult) {
-        //     //     const receipt = await txResult.getReceipt();
-        //     //     expect(receipt.status).equal('0x1');
-        //     // }
+        //     const amount = '100000000000000000000';
+        //     const txResult = await VASYA.migrateToken(amount, 1000000, 200000000000);
+        //     const hash = await txResult.getHash();
+        //     console.log(`Transaction hash ${hash}`);
+        //     if (txResult) {
+        //         const receipt = await txResult.getReceipt();
+        //         expect(receipt.status).equal('0x1');
+        //     }
         // });
 
         // it('should withdraw VASYA', async function () {
