@@ -88,7 +88,7 @@ function createSonmFactory(remoteEthNodeUrl, chainId = 'live', privateChain = fa
             const keys = privateChain ? KEYS.sidechain : KEYS.mainchain;
 
             for (const key in keys) {
-                chainConfig.contractAddress[key] = await addressRegistry.call('read', [Buffer.from(keys[key])], '0x' + Array(41).join('0'), toHex(1000000));
+                chainConfig.contractAddress[key] = (await addressRegistry.call('read', [Buffer.from(keys[key])], '0x' + Array(41).join('0'), toHex(1000000))).toLowerCase();
             }
         }
     }
