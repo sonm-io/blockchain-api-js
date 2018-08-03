@@ -9,6 +9,7 @@ const initContract = require('../utils/init-contract');
 const GAS_LIMIT_DEFAULT = 200000;
 const GAS_PRICE_MAX = '100000000000';
 const MAX_ALLOWANCE = '440000000000000000000000000';
+const ZERO_ADDRESS = '0x' + Array(41).join('0');
 
 class Account {
     constructor({gethClient, address0x, sonmTokenAddress, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false}) {
@@ -93,7 +94,7 @@ class Account {
         return tx.getReceipt();
     }
 
-    async createChangeRequest(id = 0, newPrice, newDuration) {
+    async createChangeRequest(id = 0, newPrice, newDuration = '0') {
         const tx = await this.callContractMethod('market', 'CreateChangeRequest', [id, newPrice, newDuration], 2000000);
         return tx.getReceipt();
     }
@@ -105,6 +106,11 @@ class Account {
 
     async confirmWorker(slaveId = '') {
         const tx = await this.callContractMethod('market', 'ConfirmWorker', [slaveId], 2000000);
+        return tx.getReceipt();
+    }
+
+    async createOrder({orderType, counterPartyId = ZERO_ADDRESS, duration = 0, price, netflags = [], identityLevel = 1, blacklist = ZERO_ADDRESS, tag = '', benchmarks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}) {
+        const tx = await this.callContractMethod('market', 'PlaceOrder', [orderType, counterPartyId, duration, price, netflags, identityLevel, blacklist, Buffer.from(tag, 'hex'), benchmarks], 2000000);
         return tx.getReceipt();
     }
 

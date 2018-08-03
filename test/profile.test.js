@@ -224,12 +224,26 @@ describe('SONM entity', function () {
         // });
         //
 
-        it('should create change request', async function () {
+        it('should create order', async function () {
             this.timeout(+Infinity);
 
-            console.log(await sidechainVASYA.createChangeRequest(4, 0, 76400));
+            const res = await sidechainVASYA.createOrder({
+                orderType: 1,
+                price: '308638888888888',
+            });
+
+            console.log(res);
             expect(true).equal(true);
         });
+
+        // it('should create change request', async function () {
+        //     this.timeout(+Infinity);
+        //
+        //     const res = await sidechainVASYA.createChangeRequest(98, '45555555555555');
+        //
+        //     console.log(res);
+        //     expect(true).equal(true);
+        // });
 
         // it('should cancel change request', async function () {
         //     this.timeout(+Infinity);
