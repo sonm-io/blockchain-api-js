@@ -2,7 +2,7 @@ const BN = require('ethereumjs-util').BN;
 const fromHex = require('./utils/from-hex');
 
 const MINUTE = 60 * 1000;
-const MAX_TIMEOUT = Number.MAX_SAFE_INTEGER;
+const MAX_TIMEOUT = MINUTE * 1000;
 
 class TxResult {
     constructor(src, gethClient, txParams = null) {
