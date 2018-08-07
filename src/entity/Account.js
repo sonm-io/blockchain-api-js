@@ -152,6 +152,18 @@ class Account {
 
         return this.gethClient.sendTransaction(tx);
     }
+    async getGasParams(limit, price) {
+        return Promise.all([
+                limit === undefined ? await this.getGasPrice() : limit,
+                price === undefined ? await this.getGasPrice() : price,
+            ]);    
+    }
+
+    async getGasParamsAsHex(limit, price) {
+        const [l, p] = await this.getGasParams(limit, price);
+
+        return [toHex(l), toHex(p)];
+    }
 
     async generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice) {
         if (!this.nonce) {
@@ -218,16 +230,24 @@ class Account {
         }
     }
 
-    async approve(amount, address, gasLimit, gasPrice) {
-        gasLimit = toHex(gasLimit || (await this.getGasLimit()));
-        gasPrice = toHex(gasPrice || (await this.getGasPrice()));
+    async approveFast(amount, address, gasLimit, gasPrice) {
+        const [limit, price] = this.getGasParamsAsHex(gasLimit, gasPrice);
 
         const value = toHex(amount);
 
-        let allowance = await this.callContractMethod('token', 'approve', [address, 0], gasLimit, gasPrice);
+        allowance = await this.callContractMethod('token', 'approve', [address, value], limit, price);
+        return allowance.getReceipt();
+    }
+
+    async approve(amount, address, gasLimit, gasPrice) {
+        const [limit, price] = this.getGasParamsAsHex(gasLimit, gasPrice);
+
+        const value = toHex(amount);
+
+        let allowance = await this.callContractMethod('token', 'approve', [address, 0], limit, price);
         await allowance.getReceipt();
 
-        allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
+        allowance = await this.callContractMethod('token', 'approve', [address, value], limit, price);
         return allowance.getReceipt();
     }
 
@@ -245,7 +265,7 @@ class Account {
     }
 
     async getKYCLink(amount, address, gasLimit, gasPrice) {
-        let receipt = await this.approve(amount, address, gasLimit, gasPrice);
+        let receipt = await this.approveFast(amount, address, gasLimit, gasPrice);
 
         if (receipt.status === '0x1') {
             const sign = this.gethClient.signMessage(receipt.transactionHash);
