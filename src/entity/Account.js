@@ -152,6 +152,18 @@ class Account {
 
         return this.gethClient.sendTransaction(tx);
     }
+    async getGasParams(limit, price) {
+        return Promise.all([
+                limit === undefined ? await this.getGasLimit() : limit,
+                price === undefined ? await this.getGasPrice() : price,
+            ]);    
+    }
+
+    async getGasParamsAsHex(limit, price) {
+        const [l, p] = await this.getGasParams(limit, price);
+
+        return [toHex(l), toHex(p)];
+    }
 
     async generateTransaction(to, amount, tokenAddress, gasLimit, gasPrice) {
         if (!this.nonce) {
@@ -208,20 +220,35 @@ class Account {
         gasPrice = toHex(gasPrice || (await this.getGasPrice()));
 
         const existsAllowance = await this.contracts.token.call('allowance', [this.getAddress(), address], this.getAddress(), gasLimit, gasPrice);
-        const value = toHex(amount);
 
         //reset allowance
         if (existsAllowance.lt(new BN(amount))) {
-            let allowance = await this.callContractMethod('token', 'approve', [address, 0], gasLimit, gasPrice);
-            let receipt = await allowance.getReceipt();
-
-            allowance = await this.callContractMethod('token', 'approve', [address, value], gasLimit, gasPrice);
-            receipt = await allowance.getReceipt();
-
+            const receipt = await this.approve(amount, address, gasLimit, gasPrice);
             return receipt.status === '0x1';
         } else {
             return true;
         }
+    }
+
+    async approveFast(amount, address, gasLimit, gasPrice) {
+        const [limit, price] = await this.getGasParamsAsHex(gasLimit, gasPrice);
+
+        const value = toHex(amount);
+
+        const allowance = await this.callContractMethod('token', 'approve', [address, value], limit, price);
+        return allowance.getReceipt();
+    }
+
+    async approve(amount, address, gasLimit, gasPrice) {
+        const [limit, price] = await this.getGasParamsAsHex(gasLimit, gasPrice);
+
+        const value = toHex(amount);
+
+        let allowance = await this.callContractMethod('token', 'approve', [address, 0], limit, price);
+        await allowance.getReceipt();
+
+        allowance = await this.callContractMethod('token', 'approve', [address, value], limit, price);
+        return allowance.getReceipt();
     }
 
     async migrateToken(amount, gasLimit, gasPrice) {
@@ -238,7 +265,7 @@ class Account {
     }
 
     async getKYCLink(amount, address, gasLimit, gasPrice) {
-        let receipt = await this.setAllowance(amount, address, gasLimit, gasPrice);
+        let receipt = await this.approveFast(amount, address, gasLimit, gasPrice);
 
         if (receipt.status === '0x1') {
             const sign = this.gethClient.signMessage(receipt.transactionHash);
