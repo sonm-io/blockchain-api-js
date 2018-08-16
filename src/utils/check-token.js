@@ -8,15 +8,14 @@ module.exports = async function isERC20(address, gethClient) {
     invariant(address.startsWith('0x'), 'address should starts with 0x');
     invariant(gethClient, 'gethClient is not defined');
 
-    if (await gethClient.method('getCode')(address) !== '0x') {
+    if (await gethClient.getCode(address) !== '0x') {
         try {
-            const contractObject = await initContract('token', gethClient);
-            const contract = await contractObject.at(address);
+            const contract = initContract('token', gethClient, address);
 
             const [name, symbol, decimals] = await Promise.all([
-                contract.name(),
-                contract.symbol(),
-                contract.decimals()
+                contract.call('name'),
+                contract.call('symbol'),
+                contract.call('decimals'),
             ]);
 
             return {
@@ -27,6 +26,7 @@ module.exports = async function isERC20(address, gethClient) {
                 contract,
             };
         } catch (err) {
+            console.log(err);
             throw new Error('not_erc20_token');
         }
     } else {

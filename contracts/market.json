@@ -1,0 +1,1057 @@
+{
+  "contractName": "Market",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "deals",
+      "outputs": [
+        {
+          "name": "supplierID",
+          "type": "address"
+        },
+        {
+          "name": "consumerID",
+          "type": "address"
+        },
+        {
+          "name": "masterID",
+          "type": "address"
+        },
+        {
+          "name": "askID",
+          "type": "uint256"
+        },
+        {
+          "name": "bidID",
+          "type": "uint256"
+        },
+        {
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "name": "endTime",
+          "type": "uint256"
+        },
+        {
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "name": "blockedBalance",
+          "type": "uint256"
+        },
+        {
+          "name": "totalPayout",
+          "type": "uint256"
+        },
+        {
+          "name": "lastBillTS",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "orders",
+      "outputs": [
+        {
+          "name": "orderType",
+          "type": "uint8"
+        },
+        {
+          "name": "orderStatus",
+          "type": "uint8"
+        },
+        {
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "name": "counterparty",
+          "type": "address"
+        },
+        {
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "identityLevel",
+          "type": "uint8"
+        },
+        {
+          "name": "blacklist",
+          "type": "address"
+        },
+        {
+          "name": "tag",
+          "type": "bytes32"
+        },
+        {
+          "name": "frozenSum",
+          "type": "uint256"
+        },
+        {
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "name": "_blacklist",
+          "type": "address"
+        },
+        {
+          "name": "_oracle",
+          "type": "address"
+        },
+        {
+          "name": "_profileRegistry",
+          "type": "address"
+        },
+        {
+          "name": "_benchmarksQuantity",
+          "type": "uint256"
+        },
+        {
+          "name": "_netflagsQuantity",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "orderID",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderPlaced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "orderID",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "name": "DealOpened",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "name": "DealUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "dealID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "paidAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Billed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "changeRequestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "DealChangeRequestSet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "changeRequestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "DealChangeRequestUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "master",
+          "type": "address"
+        }
+      ],
+      "name": "WorkerAnnounced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "master",
+          "type": "address"
+        }
+      ],
+      "name": "WorkerConfirmed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "master",
+          "type": "address"
+        }
+      ],
+      "name": "WorkerRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "newNum",
+          "type": "uint256"
+        }
+      ],
+      "name": "NumBenchmarksUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "newNum",
+          "type": "uint256"
+        }
+      ],
+      "name": "NumNetflagsUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Pause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Unpause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_orderType",
+          "type": "uint8"
+        },
+        {
+          "name": "_id_counterparty",
+          "type": "address"
+        },
+        {
+          "name": "_duration",
+          "type": "uint256"
+        },
+        {
+          "name": "_price",
+          "type": "uint256"
+        },
+        {
+          "name": "_netflags",
+          "type": "bool[]"
+        },
+        {
+          "name": "_identityLevel",
+          "type": "uint8"
+        },
+        {
+          "name": "_blacklist",
+          "type": "address"
+        },
+        {
+          "name": "_tag",
+          "type": "bytes32"
+        },
+        {
+          "name": "_benchmarks",
+          "type": "uint64[]"
+        }
+      ],
+      "name": "PlaceOrder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "orderID",
+          "type": "uint256"
+        }
+      ],
+      "name": "CancelOrder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "askID",
+          "type": "uint256"
+        },
+        {
+          "name": "buyoutDuration",
+          "type": "uint256"
+        }
+      ],
+      "name": "QuickBuy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_askID",
+          "type": "uint256"
+        },
+        {
+          "name": "_bidID",
+          "type": "uint256"
+        }
+      ],
+      "name": "OpenDeal",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        },
+        {
+          "name": "blacklisted",
+          "type": "uint8"
+        }
+      ],
+      "name": "CloseDeal",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "name": "Bill",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        },
+        {
+          "name": "newPrice",
+          "type": "uint256"
+        },
+        {
+          "name": "newDuration",
+          "type": "uint256"
+        }
+      ],
+      "name": "CreateChangeRequest",
+      "outputs": [
+        {
+          "name": "changeRequestID",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "changeRequestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "CancelChangeRequest",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_master",
+          "type": "address"
+        }
+      ],
+      "name": "RegisterWorker",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_worker",
+          "type": "address"
+        }
+      ],
+      "name": "ConfirmWorker",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_worker",
+          "type": "address"
+        },
+        {
+          "name": "_master",
+          "type": "address"
+        }
+      ],
+      "name": "RemoveWorker",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "orderID",
+          "type": "uint256"
+        }
+      ],
+      "name": "GetOrderInfo",
+      "outputs": [
+        {
+          "name": "orderType",
+          "type": "uint8"
+        },
+        {
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "name": "counterparty",
+          "type": "address"
+        },
+        {
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "netflags",
+          "type": "bool[]"
+        },
+        {
+          "name": "identityLevel",
+          "type": "uint8"
+        },
+        {
+          "name": "blacklist",
+          "type": "address"
+        },
+        {
+          "name": "tag",
+          "type": "bytes32"
+        },
+        {
+          "name": "benchmarks",
+          "type": "uint64[]"
+        },
+        {
+          "name": "frozenSum",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "orderID",
+          "type": "uint256"
+        }
+      ],
+      "name": "GetOrderParams",
+      "outputs": [
+        {
+          "name": "orderStatus",
+          "type": "uint8"
+        },
+        {
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "name": "GetDealInfo",
+      "outputs": [
+        {
+          "name": "benchmarks",
+          "type": "uint64[]"
+        },
+        {
+          "name": "supplierID",
+          "type": "address"
+        },
+        {
+          "name": "consumerID",
+          "type": "address"
+        },
+        {
+          "name": "masterID",
+          "type": "address"
+        },
+        {
+          "name": "askID",
+          "type": "uint256"
+        },
+        {
+          "name": "bidID",
+          "type": "uint256"
+        },
+        {
+          "name": "startTime",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        }
+      ],
+      "name": "GetDealParams",
+      "outputs": [
+        {
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "endTime",
+          "type": "uint256"
+        },
+        {
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "name": "blockedBalance",
+          "type": "uint256"
+        },
+        {
+          "name": "totalPayout",
+          "type": "uint256"
+        },
+        {
+          "name": "lastBillTS",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_worker",
+          "type": "address"
+        }
+      ],
+      "name": "GetMaster",
+      "outputs": [
+        {
+          "name": "master",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "changeRequestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "GetChangeRequestInfo",
+      "outputs": [
+        {
+          "name": "dealID",
+          "type": "uint256"
+        },
+        {
+          "name": "requestType",
+          "type": "uint8"
+        },
+        {
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetDealsAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetOrdersAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetChangeRequestsAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetBenchmarksQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "GetNetflagsQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newPR",
+          "type": "address"
+        }
+      ],
+      "name": "SetProfileRegistryAddress",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newBL",
+          "type": "address"
+        }
+      ],
+      "name": "SetBlacklistAddress",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newOracle",
+          "type": "address"
+        }
+      ],
+      "name": "SetOracleAddress",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newQuantity",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetBenchmarksQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_newQuantity",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetNetflagsQuantity",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

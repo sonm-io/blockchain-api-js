@@ -1,9 +1,9 @@
 'use strict';
 
-const Buffer = require('buffer').Buffer;
+const Buffer = require('safe-buffer').Buffer;
 const scryptjs = require('scrypt-async');
-const sha3 = require('js-sha3').keccak256;
-const bcrypto = require('browserify-aes');
+const crypto = require('browserify-aes');
+const ethUtil = require('ethereumjs-util');
 
 module.exports = function (json, password) {
     let derivedKey;
@@ -24,22 +24,14 @@ module.exports = function (json, password) {
     }
 
     const ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
-
-    //const mac = sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
-    const mac = sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), ciphertext]));
+    const mac = ethUtil.sha3(Buffer.concat([Buffer.from(derivedKey.slice(16, 32)), ciphertext])).toString('hex');
 
     if (mac !== json.crypto.mac) {
         throw new Error('Key derivation failed - possibly wrong passphrase')
     }
 
-    const decipher = bcrypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'))
-
-    //let privateKey = Buffer.concat([decipher.update(ciphertext), decipher.final()])
-    let privateKey = Buffer.concat([Buffer.from(decipher.update(ciphertext)), Buffer.from(decipher.final())])
-
-    while (privateKey.length < 32) {
-        privateKey = Buffer.concat([new Buffer([0x00]), privateKey]);
-    }
+    const decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'))
+    const privateKey = Buffer.concat([Buffer.from(decipher.update(ciphertext)), Buffer.from(decipher.final())])
 
     return privateKey.toString('hex');
 };
