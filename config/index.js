@@ -26,7 +26,7 @@ module.exports = {
     testrpc_private: {
         url: 'https://proxy.test.sonm.com:8546',
         contractAddress: {
-            addressRegistry: '0x4b90dff4de1eb5a8581f3200bd5956c9b8dd6346',
+            addressRegistry: '0xa78d434b49dd7267c88cbf5ed181598d8290006b',
         },
     },
 };
