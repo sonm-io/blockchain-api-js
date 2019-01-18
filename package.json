@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/*.test.js",
-    "karma": "./node_modules/karma/bin/karma start --browsers Chrome --debug",
+    "karma": "karma start --browsers Chrome --debug",
     "build": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js"
   },
   "author": "SONM Team",
@@ -46,6 +46,7 @@
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "watchify": "^3.11.0"
   }
 }

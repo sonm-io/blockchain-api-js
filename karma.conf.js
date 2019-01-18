@@ -11,7 +11,7 @@ module.exports = function (config) {
 
         browsers: ['Chrome'], // You may use 'ChromeCanary', 'Chromium' or any other supported browser
 
-        singleRun: true,
+        singleRun: false,
 
         files: [
             "src/**/*.js",
