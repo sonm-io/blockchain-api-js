@@ -1,5 +1,5 @@
 {
-  "name": "blockchain-api-js-v3",
+  "name": "sonm-api",
   "version": "3.0.0",
   "description": "SONM Blockchain API v3 (typescript)",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "prod": "cross-env NODE_ENV=production rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "SONM Team",
   "license": "GPL",
   "devDependencies": {
     "@babel/core": "^7.2.2",
