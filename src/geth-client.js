@@ -1,21 +1,25 @@
-const invariant = require('fbjs/lib/invariant');
-const fromHex = require('./utils/from-hex');
-const Buffer = require('buffer').Buffer;
-const EthereumTx = require('ethereumjs-tx');
-const TransactionResult = require('./TransactionResult');
+import invariant from 'fbjs/lib/invariant';
+import { fromHex } from './utils/hex';
+import { Buffer } from 'buffer';
+const EthereumTx = require ('ethereumjs-tx');
+import TransactionResult from './transaction-result';
 const ethUtil = require('ethereumjs-util');
 
-module.exports = class GethClient {
+export class GethClient {
 
-    constructor(url, chainId, privateChain = false, timeout = 30000) {
-        invariant(url, 'url is not defined');
+    /**
+     * @param {string} url 
+     */
+    constructor(url) {
+        invariant(url.length > 0, 'url is not defined');
 
         this.requestCounter = 1;
         this.url = url;
-        this.timeout = timeout;
-        this.privateKey = null;
-        this.chainId = chainId;
-        this.privateChain = privateChain;
+        
+        /** @type {string} */
+        this.privateKey = '';
+        
+        /** @type {object} */
         this.errors = {
             'intrinsic gas too low': 'sonmapi_gas_too_low',
             'insufficient funds for gas * price + value': 'sonmapi_insufficient_funds',
@@ -23,6 +27,10 @@ module.exports = class GethClient {
         };
     }
 
+    /**
+     * @param {string} method 
+     * @param {any[]} params 
+     */
     async call(method, params = []) {
         const body = {
             method: method,
@@ -33,7 +41,6 @@ module.exports = class GethClient {
 
         try {
             const response = await fetch(this.url, {
-                timeout: this.timeout,
                 method: 'POST',
                 body: JSON.stringify(body),
                 headers: { 'Content-Type': 'application/json' },
@@ -63,20 +70,32 @@ module.exports = class GethClient {
         return fromHex(await this.call('eth_gasPrice'));
     }
 
+    /**
+     * @param {string} address 
+     */
     async getBalance(address) {
         const res = await this.call('eth_getBalance', [address, 'latest']);
 
         return fromHex(res);
     }
 
+    /**
+     * @param {string} address 
+     */
     async getCode(address) {
         return await this.call('eth_getCode', [address, 'latest']);
     }
 
+    /**
+     * @param {string} hash 
+     */
     async getTransaction(hash) {
         return await this.call('eth_getTransactionByHash', [hash]);
     }
 
+    /**
+     * @param {string} hash 
+     */
     async getTransactionReceipt(hash) {
         return await this.call('eth_getTransactionReceipt', [hash]);
     }
@@ -85,19 +104,24 @@ module.exports = class GethClient {
         return await this.call('eth_blockNumber');
     }
 
+    /**
+     * @param {string} address 
+     */
     async getTransactionCount(address) {
         return fromHex(await this.call('eth_getTransactionCount', [address, 'latest']));
     }
 
+    /**
+     * @param {any} tx 
+     */
     async sendTransaction(tx) {
-        if(this.privateChain) {
-            tx.gasPrice = 0;
-        }
-
         const hash = await this.call('eth_sendRawTransaction', [this.getRawTransaction(tx)]);
         return new TransactionResult(hash, this, tx);
     }
 
+    /**
+     * @param {any} tx 
+     */
     getRawTransaction(tx) {
         const privateKey = Buffer.from(this.privateKey, 'hex');
         const signer = new EthereumTx(tx);
@@ -106,6 +130,9 @@ module.exports = class GethClient {
         return '0x' + signer.serialize().toString('hex');
     }
 
+    /**
+     * @param {string} message 
+     */
     signMessage(message) {
         return ethUtil.ecsign(Buffer.from(message.substr(2), 'hex'), Buffer.from(this.privateKey, 'hex'));
     }
@@ -114,6 +141,9 @@ module.exports = class GethClient {
         return await this.call('net_version');
     }
 
+    /**
+     * @param {string} privateKey 
+     */
     setPrivateKey(privateKey) {
         this.privateKey = privateKey;
     }

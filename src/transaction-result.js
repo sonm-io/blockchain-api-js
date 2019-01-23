@@ -1,14 +1,26 @@
-const BN = require('ethereumjs-util').BN;
-const fromHex = require('./utils/from-hex');
+const BN = require ('bn.js'); 
+import { fromHex } from './utils/hex';
+import { GethClient } from './geth-client';
 
 const MINUTE = 60 * 1000;
 const MAX_TIMEOUT = MINUTE * 1000;
 
 class TxResult {
+    
+    /**
+     * Create Transaction Result
+     * @param {TxResult | Promise<any> | string} src 
+     * @param {GethClient} gethClient 
+     * @param {object?} txParams 
+     */
     constructor(src, gethClient, txParams = null) {
+        /** @type {GethClient} */
         this._geth = gethClient;
+        /** @type {object} */
         this._receipt = null;
-        this._hash = null;
+        /** @type {string} */
+        this._hash = '';
+        /** @type {Promise<any>?} */
         this._promise = null;
 
         if (txParams !== null) {
@@ -27,14 +39,20 @@ class TxResult {
         }
     }
 
+    /**
+     * @param {any} txResult 
+     */
     _copyCtr(txResult) {
         if (txResult._hash) {
             this._hash = txResult._hash;
         } else {
-            this._promise = txResult._promise.then(result => this._processPromiseResult(result));
+            this._promise = txResult._promise.then((/** @type {any} */ result) => this._processPromiseResult(result));
         }
     }
 
+    /**
+     * @param {any} val 
+     */
     _processPromiseResult(val) {
         if (TxResult.checkTxHash(val)) {
             this._hash = val;
@@ -44,18 +62,22 @@ class TxResult {
         }
     }
 
+    /**
+     * @param {string} src 
+     */
     static checkTxHash(src) {
         return typeof src === 'string' && src.startsWith('0x');
     }
 
+    /**
+     * @param {object} src 
+     */
     static checkTxReceipt(src) {
-        return src instanceof Object
-            && 'cumulativeGasUsed' in src;
+        return src instanceof Object && 'cumulativeGasUsed' in src;
     }
 
     async getHash() {
         await this._promise;
-
         return this._hash;
     }
 
@@ -68,6 +90,9 @@ class TxResult {
         return this._txParams;
     }
 
+    /**
+     * @param {object} txParams 
+     */
     validateTxParams(txParams) {
         const valid = typeof txParams === 'object'
             && 'gasPrice' in txParams;
@@ -110,7 +135,7 @@ class TxResult {
                         clearTimeout(timeoutTask);
                         done(result);
                     } else {
-                        setTimeout(check, this._getPollingInterval());
+                        setTimeout(check, 1000);
                     }
                 };
 
@@ -125,20 +150,9 @@ class TxResult {
         return result;
     }
 
-    _getPollingInterval() {
-        const age = Date.now() - this.timestamp;
-
-        const result = age > MINUTE
-            ? MINUTE
-            : 1000;
-
-        return result;
-    }
-
     async getInfo() {
-        return this._geth.method('getTransaction')(await this.getHash());
+        return this._geth.getTransaction(await this.getHash());
     }
 }
 
-module.exports = TxResult;
-
+export default TxResult;
